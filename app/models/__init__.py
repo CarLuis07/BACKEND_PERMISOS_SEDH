@@ -1,0 +1,1 @@
+from .empleado import Empleado

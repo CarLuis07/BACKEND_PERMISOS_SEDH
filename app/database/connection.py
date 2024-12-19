@@ -4,14 +4,14 @@ import urllib
 import os
 from dotenv import load_dotenv
 
-load_dotenv() 
+load_dotenv()  # Carga las variables de entorno
 
 db_server = os.getenv('DB_SERVER')
 db_name = os.getenv('DB_NAME')
 db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD')
 
-# Crea la cadena de conexión
+# Construye la cadena de conexión
 connection_string = (
     f"DRIVER={{ODBC Driver 17 for SQL Server}};"
     f"SERVER={db_server};"
