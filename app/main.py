@@ -1,14 +1,17 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from app.database.connection import get_db
 import uvicorn
 import os
 from dotenv import load_dotenv
+
 
 app = FastAPI()
 load_dotenv()
 
 @app.get("/")
-def message(response: Response):
-    return {"message": "Hello, World!"}
+def read_root(db: Session = Depends(get_db)):
+    return {"message": "Conexión exitosa a la base de datos"}
 
 
 if __name__ == "__main__":
