@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response
 import uvicorn
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
 app = FastAPI()
 load_dotenv()
