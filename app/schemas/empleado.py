@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from datetime import datetime
 
 class EmpleadoBase(BaseModel):
     email_institucional: str
