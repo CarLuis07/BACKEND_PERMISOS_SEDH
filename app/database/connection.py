@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import urllib
 import os
@@ -27,6 +28,9 @@ engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
 
 # Crea una sesión de base de datos
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base de datos
+Base = declarative_base()
 
 # Dependencia para obtener la sesión de base de datos
 def get_db():
