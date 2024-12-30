@@ -3,6 +3,7 @@ from app.database import Base
 
 class Empleado(Base):
     __tablename__ = "EMPLEADOS"
+    
     email_institucional = Column(String, primary_key=True, index=True, nullable=False)
     pri_nombre = Column(String, index=True, nullable=False)
     seg_nombre = Column(String, index=True, nullable=False)

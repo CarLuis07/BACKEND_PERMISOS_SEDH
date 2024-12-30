@@ -1,14 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from app.database.connection import get_db
-from app.schemas.empleado import Empleado as EmpleadoSchema
+from app.schemas.empleadoSchema import Empleado as EmpleadoSchema
 from datetime import datetime
 
-router = APIRouter()
-
-@router.get("/empleados/", response_model=list[EmpleadoSchema])
-def read_empleados(db: Session = Depends(get_db)):
+def obtener_empleados(db: Session):
     try:
         result = db.execute(text("EXEC dbo.ObtenerEmpleados")).mappings().all()
         empleados = []
@@ -39,4 +34,4 @@ def read_empleados(db: Session = Depends(get_db)):
             empleados.append(EmpleadoSchema(**empleado_data))
         return empleados
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise e
