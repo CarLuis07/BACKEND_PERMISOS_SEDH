@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
-from app.routers import empleadoRoute, permisoPersonal
+from app.routers import empleadoRoute, permisoPersonalRoute, authRoute
 import uvicorn
 import os
 from dotenv import load_dotenv
@@ -13,9 +13,9 @@ load_dotenv()
 def read_root(db: Session = Depends(get_db)):
     return {"message": "Conexión exitosa a la base de datos"}
 
-# Incluir las rutas definidas en la carpeta routes
+app.include_router(authRoute.router, prefix="/api", tags=["auth"])
 app.include_router(empleadoRoute.router, prefix="/api", tags=["empleados"])
-app.include_router(permisoPersonal.router, prefix="/api", tags=["permisoPersonal"])
+app.include_router(permisoPersonalRoute.router, prefix="/api", tags=["permisoPersonal"])
 
 if __name__ == "__main__":
     host = os.getenv('HOST')
