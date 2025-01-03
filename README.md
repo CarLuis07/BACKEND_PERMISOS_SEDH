@@ -1,2 +1,4 @@
 # BACKEND_PERMISOS_SEDH
- el backend de los permisos de la secretaria de derechos humanos y
+para levantar el proyecto 
+
+```uvicorn app.main:app --host X.X.X.x --port 80```

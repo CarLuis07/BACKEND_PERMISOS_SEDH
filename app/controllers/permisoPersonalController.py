@@ -27,7 +27,7 @@ def cargar_datos_para_agregar_permisos(db: Session, current_user: TokenData):
         raise e
 
 
-def agregar_el_permiso(db: Session, permiso: PermisoPersonalAgregarUnPermiso, current_user: TokenData):
+def agregar_un_permiso_personal(db: Session, permiso: PermisoPersonalAgregarUnPermiso, current_user: TokenData):
     try:
         db.execute(
             text("EXEC InsertarPermisoPersonal :EmailInstitucional, :FecSolicitud, :HorSolicitadas, :Motivo, :CatEmergencia"),

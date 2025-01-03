@@ -1,8 +1,10 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.routers import empleadoRoute, permisoPersonalRoute, authRoute
+from app.auth.oauth2 import oauth2_scheme  # Import oauth2_scheme
+from app.schemas import TokenData  # Import TokenData
 import uvicorn
 import os
 from dotenv import load_dotenv
@@ -13,6 +15,7 @@ load_dotenv()
 # Configuración de CORS
 origins = [
     "http://localhost:4200",
+    "http://192.168.181.113",
     # Agrega aquí otros orígenes permitidos si es necesario
 ]
 
@@ -23,6 +26,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Ejemplo de dependencia para validar encabezados de autenticación
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+        token_data = TokenData(user_id=user_id)
+    except JWTError:
+        raise credentials_exception
+    return token_data
 
 @app.get("/")
 def read_root(db: Session = Depends(get_db)):
