@@ -17,7 +17,7 @@ el proyecto utiliza la conexion a la BD mediante sqlServer para su conexión est
 - [GitHub Desktop](https://desktop.github.com/)
 - [Visual Studio Code](https://code.visualstudio.com/download)
 - [Python v3.13.0](https://www.python.org/downloads/release/python-3130/)
-(Al instalar permita todos los permisos para que tenga una consola de git en Visual Studio Code)
+- [Git 2.47.1 ](https://git-scm.com/downloads/win)(Al instalar permita todos los permisos para que tenga una consola de git en Visual Studio Code)
 
 ## Instrucciones
 para ejecutar este proyecto 
