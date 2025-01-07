@@ -66,4 +66,6 @@ uvicorn app.main:app --host X.X.X.X --port 80
 - **[@CarLuis07](https://github.com/CarLuis07/)  - Luis Cardona - `kikecar97@gmail.com`**
 
 ### Colaboradores
-*Emerson Duron  - `emerson.duron@sedh.gob.hn`
+
+
+- Emerson Duron  - `emerson.duron@sedh.gob.hn`
