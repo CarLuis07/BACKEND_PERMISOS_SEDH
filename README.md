@@ -25,7 +25,10 @@ para ejecutar este proyecto
 2. abralo con un editor de texto como visual Studio Code.
 3. abra una terminal en VSC, **escoga consola de Git Bash** y coloque el siguiente comando, eso creara un entorno virtual de python y las dependencias quedaran solo en el proyecto y no en su PC como recomienda python.
 
-
+```bash
+ python -m venv venv
+```
+despues: 
 ```bash
 source venv/Scripts/activate
 ```
