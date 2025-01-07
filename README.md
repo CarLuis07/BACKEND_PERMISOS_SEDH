@@ -1,6 +1,5 @@
 # BACKEND_PERMISOS_SEDH
 
-
 Permisos Personales es un sistema monolitico para el area de Recursos Humanos de la Secretaria de Derechos Humanos en Honduras. dicho sistema se encarga de gestionar los permisos personales, oficiales, vacaciones de todos los empleados.
 
 el proyecto utiliza la conexion a la BD mediante sqlServer para su conexión estara mas abajo en la sección de instrucciones.
