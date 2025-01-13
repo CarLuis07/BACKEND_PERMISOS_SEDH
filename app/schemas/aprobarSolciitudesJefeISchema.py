@@ -2,7 +2,8 @@ from pydantic import BaseModel, validator
 from typing import Optional
 from datetime import datetime
 
-class AprobarSolicitudesJefeICargarDatos(BaseModel):
+class SolicitudesJefeICargarDatos(BaseModel):
+    id_permiso: str
     fec_solicitud: datetime
     nom_tipo_solicitud: str
     pri_nombre: str
@@ -42,5 +43,15 @@ class AprobarSolicitudesJefeICargarDatos(BaseModel):
             print(f"Error al parsear fecha: {e}")
             raise ValueError(f'Error al procesar la fecha: {value}')
 
+    class Config:
+        orm_mode = True
+
+
+class SolicitudesJefeIResponder(BaseModel):
+    id_permiso: int
+    tip_permiso: str
+    pri_aprobacion: str
+    mot_rechazo: Optional[str]=None
+    
     class Config:
         orm_mode = True
