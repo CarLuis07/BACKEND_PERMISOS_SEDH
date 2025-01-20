@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
-from app.routers import empleadoRoute, permisoPersonalRoute, authRoute, permisoOficialRoute, misSolicitudesRoute, aprobarSolicitudesJefeIRoute
+from app.routers import empleadoRoute, permisoPersonalRoute, authRoute, permisoOficialRoute, misSolicitudesRoute, aprobarSolicitudesJefeIRoute, aprobarSolicitudesJefeRRHHRoute
 from app.auth.oauth2 import oauth2_scheme  # Import oauth2_scheme
 from app.schemas import TokenData  # Import TokenData
 import uvicorn
@@ -50,6 +50,7 @@ app.include_router(permisoOficialRoute.router, prefix="/api", tags=["permisoOfic
 app.include_router(misSolicitudesRoute.router, prefix="/api", tags=["misSolicitudes"])
 app.include_router(misSolicitudesRoute.router, prefix="/api", tags=["misSolicitudesEmergencia"])
 app.include_router(aprobarSolicitudesJefeIRoute.router, prefix="/api", tags=["aprobarSolicitudes"])
+app.include_router(aprobarSolicitudesJefeRRHHRoute.router, prefix="/api", tags=["aprobarSolicitudesRRHH"])
 
 
 if __name__ == "__main__":

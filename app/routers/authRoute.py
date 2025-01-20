@@ -49,7 +49,7 @@ async def get_current_active_user(current_user: TokenData = Depends(get_current_
 def get_current_active_user_with_role(role: int):
     async def role_checker(current_user: TokenData = Depends(get_current_user)):
         if current_user.role != role:
-            raise HTTPException(status_code=403, detail="Operation not permitted")
+            raise HTTPException(status_code=403, detail="No tienes permisos para este recurso")
         return current_user
     return role_checker
 
