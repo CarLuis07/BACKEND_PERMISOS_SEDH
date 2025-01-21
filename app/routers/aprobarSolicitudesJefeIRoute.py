@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database.connection import get_db
-from app.schemas.aprobarSolciitudesJefeISchema import SolicitudesJefeICargarDatos, SolicitudesJefeIResponder
+from app.schemas.aprobarSoliciitudesJefeISchema import SolicitudesJefeICargarDatos, SolicitudesJefeIResponder
 from app.schemas.authSchema import TokenData
 from app.controllers.aprobarSolicitudesJefeIController import cargar_datos_aprobar_solicitudes_jefeI, responder_permiso
 from app.routers.authRoute import get_current_active_user_with_role
@@ -20,6 +20,7 @@ def cargar_solicitudes(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.put("/aprobarSolicitudes/")
 def aprobar_solicitud(
     permiso: SolicitudesJefeIResponder,
@@ -31,6 +32,7 @@ def aprobar_solicitud(
         return {"message": "Solicitud aprobada exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.put("/rechazarSolicitudes/")
 def rechazar_solicitud(

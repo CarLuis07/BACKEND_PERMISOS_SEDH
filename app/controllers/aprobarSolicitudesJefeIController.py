@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from app.schemas.aprobarSolciitudesJefeISchema import SolicitudesJefeICargarDatos, SolicitudesJefeIResponder
+from app.schemas.aprobarSoliciitudesJefeISchema import SolicitudesJefeICargarDatos, SolicitudesJefeIResponder
 from app.schemas.authSchema import TokenData
 
 def cargar_datos_aprobar_solicitudes_jefeI(db: Session, current_user: TokenData):
@@ -37,16 +37,25 @@ def cargar_datos_aprobar_solicitudes_jefeI(db: Session, current_user: TokenData)
 
 def responder_permiso(db: Session, permiso: SolicitudesJefeIResponder, current_user: TokenData):
     try:
+            
         db.execute(
-            text("EXEC ResponderSolicitudesJefesI :IdPermiso, :TipPermiso, :PriAprobacion, :MotRechazo"),
+            text("""EXEC ResponderSolicitudesJefesI 
+                @IdPermiso=:IdPermiso, 
+                @TipoPermiso=:TipoPermiso, 
+                @PriAprobacion=:PriAprobacion, 
+                @MotRechazo=:MotRechazo,
+                @HorasRechazadas=:HorasRechazadas"""),
             {
                 "IdPermiso": permiso.id_permiso,
-                "TipPermiso": permiso.tip_permiso,
-                "PriAprobacion": permiso.pri_aprobacion,
-                "MotRechazo": permiso.mot_rechazo
+                "TipoPermiso": permiso.tipo_permiso,
+                "PriAprobacion": current_user.email,
+                "MotRechazo": permiso.mot_rechazo,
+                "HorasRechazadas": permiso.hor_rechazadas if permiso.mot_rechazo and permiso.tipo_permiso == 'PERMISO PERSONAL' else 0
             }
         )
         db.commit()
+        return {"message": "Solicitud procesada exitosamente"}
     except Exception as e:
-        print(f"Error en controlador: {str(e)}")  # Debug
+        print(f"Error en controlador: {str(e)}")
+        db.rollback()
         raise e

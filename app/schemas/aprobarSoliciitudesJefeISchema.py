@@ -49,9 +49,28 @@ class SolicitudesJefeICargarDatos(BaseModel):
 
 class SolicitudesJefeIResponder(BaseModel):
     id_permiso: int
-    tip_permiso: str
-    pri_aprobacion: str
-    mot_rechazo: Optional[str]=None
+    tipo_permiso: str
+    pri_aprobacion: Optional[str] = None
+    mot_rechazo: Optional[str] = None
+    hor_rechazadas: Optional[int] = None
+
+    @validator('hor_rechazadas')
+    def validar_horas_rechazo(cls, v, values):
+        tipo_permiso = values.get('tipo_permiso')
+        mot_rechazo = values.get('mot_rechazo')
+        
+        # Para PERMISO PERSONAL
+        if tipo_permiso == 'PERMISO PERSONAL':
+            if mot_rechazo and v is None:
+                raise ValueError('Para rechazar un permiso personal se requieren las horas rechazadas')
+            if not mot_rechazo and v != 0:
+                raise ValueError('Si el permiso personal es aprobado, las horas rechazadas deben ser 0')
+                
+        # Para PERMISO OFICIAL
+        if tipo_permiso == 'PERMISO OFICIAL' and v != 0:
+            raise ValueError('Para permisos oficiales, las horas rechazadas deben ser 0')
+            
+        return v
     
     class Config:
         orm_mode = True

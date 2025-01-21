@@ -6,8 +6,7 @@ from app.schemas.authSchema import TokenData
 def cargar_datos_aprobar_solicitudes_jefeRRHH(db: Session, current_user: TokenData):
     try:
         result = db.execute(
-            text("EXEC CargarDatosParaAprobarSolicitudesJefeRRHH"),
-            {"EmailInstitucional": current_user.email}
+            text("EXEC CargarDatosParaAprobarSolicitudesJefeRRHH")
         )
         datos = result.mappings().all()
         permisos = []
@@ -37,16 +36,25 @@ def cargar_datos_aprobar_solicitudes_jefeRRHH(db: Session, current_user: TokenDa
 
 def responder_permiso(db: Session, permiso: SolicitudesJefeRRHHResponder, current_user: TokenData):
     try:
+            
         db.execute(
-            text("EXEC ResponderSolicitudesJefeRRHH :IdPermiso, :TipPermiso, :SegAprobacion, :MotRechazo"),
+            text("""EXEC ResponderSolicitudesJefeRRHH 
+                @IdPermiso=:IdPermiso, 
+                @TipoPermiso=:TipoPermiso, 
+                @SegAprobacion=:SegAprobacion, 
+                @MotRechazo=:MotRechazo,
+                @HorasRechazadas=:HorasRechazadas"""),
             {
                 "IdPermiso": permiso.id_permiso,
-                "TipPermiso": permiso.tip_permiso,
-                "SegAprobacion": permiso.seg_aprobacion,
-                "MotRechazo": permiso.mot_rechazo
+                "TipoPermiso": permiso.tipo_permiso,
+                "SegAprobacion": current_user.email,
+                "MotRechazo": permiso.mot_rechazo,
+                "HorasRechazadas": permiso.hor_rechazadas if permiso.mot_rechazo and permiso.tipo_permiso == 'PERMISO PERSONAL' else 0
             }
         )
         db.commit()
+        return {"message": "Solicitud procesada exitosamente"}
     except Exception as e:
-        print(f"Error en controlador: {str(e)}")  # Debug
+        print(f"Error en controlador: {str(e)}")
+        db.rollback()
         raise e

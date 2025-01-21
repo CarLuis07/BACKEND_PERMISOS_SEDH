@@ -7,7 +7,6 @@ from app.schemas.authSchema import TokenData
 from app.controllers.aprobarSolicitudesJefeRRHHCcontroller import cargar_datos_aprobar_solicitudes_jefeRRHH, responder_permiso
 from app.routers.authRoute import get_current_active_user_with_role
 
-
 router = APIRouter()
 
 @router.get("/aprobarSolicitudesRRHH/", response_model=List[SolicitudesJefeRRHHCargarDatos])
