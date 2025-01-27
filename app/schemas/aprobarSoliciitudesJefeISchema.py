@@ -15,7 +15,7 @@ class SolicitudesJefeICargarDatos(BaseModel):
     nom_cargo: str
     motivo:str
     mot_rechazo: Optional[str]
-    hor_solicitadas: Optional[int]
+    hor_solicitadas: Optional[str]
     cat_emergencia: Optional[str]
 
 

@@ -22,18 +22,3 @@ class PermisoPersonalAgregarUnPermiso(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class PermisoPersonalAprobacionJefeInmediato(BaseModel):
-    id_permiso: int
-    pri_nombre: str
-    pri_apellido: str
-    nom_dependencia: str
-    fecha: str
-    horas_solicitadas: str
-    motivo: str
-    citaMedica: int = None
-    motivo_rechazo: str = None
-
-    class Config:
-        orm_mode = True
