@@ -8,7 +8,7 @@ class PermisoPersonal(Base):
     id_tipo_solicitud = Column(SmallInteger, nullable=False)
     email_institucional = Column(String(50), index=True, nullable=False)
     fecha_solicitud = Column(Date, index=True, nullable=False)
-    horas_solicitadas = Column(SmallInteger, nullable=False)
+    horas_solicitadas = Column(Time, nullable=False)
     id_horas_disponibles = Column(SmallInteger, nullable=False)
     id_estado_solicitud = Column(SmallInteger, nullable=False, default=2)
     motivo = Column(String(200), nullable=False)

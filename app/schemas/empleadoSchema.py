@@ -23,3 +23,4 @@ class EmpleadoCreate(EmpleadoBase):
 class Empleado(EmpleadoBase):
     class Config:
         orm_mode = True
+

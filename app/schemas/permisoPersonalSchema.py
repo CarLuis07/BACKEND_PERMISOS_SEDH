@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import Optional
 
 class PermisoPersonalEmpleadoCargarDatos(BaseModel):
     pri_nombre: str
@@ -8,6 +8,7 @@ class PermisoPersonalEmpleadoCargarDatos(BaseModel):
     seg_apellido: str
     nom_dependencia: str
     nom_cargo: str
+    hor_disponibles: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -15,9 +16,9 @@ class PermisoPersonalEmpleadoCargarDatos(BaseModel):
 
 class PermisoPersonalAgregarUnPermiso(BaseModel):
     fecha_solicitud: str
-    horas_solicitadas: int
+    horas_solicitadas: str
     motivo: str
-    catalogada_emergencia: int = None
+    citaMedica: int = None
 
     class Config:
         orm_mode = True
@@ -28,10 +29,10 @@ class PermisoPersonalAprobacionJefeInmediato(BaseModel):
     pri_nombre: str
     pri_apellido: str
     nom_dependencia: str
-    fecha_solicitud: str
-    horas_solicitadas: int
+    fecha: str
+    horas_solicitadas: str
     motivo: str
-    catalogada_emergencia: int = None
+    citaMedica: int = None
     motivo_rechazo: str = None
 
     class Config:

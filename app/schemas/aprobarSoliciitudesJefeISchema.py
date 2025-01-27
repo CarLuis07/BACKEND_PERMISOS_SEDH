@@ -52,7 +52,7 @@ class SolicitudesJefeIResponder(BaseModel):
     tipo_permiso: str
     pri_aprobacion: Optional[str] = None
     mot_rechazo: Optional[str] = None
-    hor_rechazadas: Optional[int] = None
+    hor_rechazadas: Optional[str] = None
 
     @validator('hor_rechazadas')
     def validar_horas_rechazo(cls, v, values):
