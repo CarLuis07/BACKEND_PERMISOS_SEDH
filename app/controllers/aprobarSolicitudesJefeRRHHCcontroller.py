@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.schemas.aprobarSolicitudesJefeRRHHSchema import SolicitudesJefeRRHHCargarDatos, SolicitudesJefeRRHHResponder
 from app.schemas.authSchema import TokenData
+from datetime import time
 
 def cargar_datos_aprobar_solicitudes_jefeRRHH(db: Session, current_user: TokenData):
     try:
@@ -11,6 +12,9 @@ def cargar_datos_aprobar_solicitudes_jefeRRHH(db: Session, current_user: TokenDa
         datos = result.mappings().all()
         permisos = []
         for row in datos:
+            horas = row.get("HorSolicitadas")
+            horas_str = horas.strftime("%H:%M") if isinstance(horas, time) else None
+
             permiso = SolicitudesJefeRRHHCargarDatos(
                 id_permiso=row["IdPermisoPersonal"],
                 fec_solicitud=row["FecSolicitud"],
@@ -24,7 +28,7 @@ def cargar_datos_aprobar_solicitudes_jefeRRHH(db: Session, current_user: TokenDa
                 nom_cargo=row["NomCargo"],
                 motivo=row["Motivo"],
                 mot_rechazo=row["MotRechazo"],
-                hor_solicitadas=row["HorSolicitadas"],
+                hor_solicitadas=horas_str,
                 cat_emergencia=row["CatEmergencia"]
             )
             permisos.append(permiso)
@@ -49,7 +53,7 @@ def responder_permiso(db: Session, permiso: SolicitudesJefeRRHHResponder, curren
                 "TipoPermiso": permiso.tipo_permiso,
                 "SegAprobacion": current_user.email,
                 "MotRechazo": permiso.mot_rechazo,
-                "HorasRechazadas": permiso.hor_rechazadas if permiso.mot_rechazo and permiso.tipo_permiso == 'PERMISO PERSONAL' else 0
+                "HorasRechazadas": permiso.hor_rechazadas
             }
         )
         db.commit()
