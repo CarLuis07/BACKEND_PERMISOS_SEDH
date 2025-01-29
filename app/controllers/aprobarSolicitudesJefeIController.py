@@ -54,7 +54,7 @@ def responder_permiso(db: Session, permiso: SolicitudesJefeIResponder, current_u
                 "TipoPermiso": permiso.tipo_permiso,
                 "PriAprobacion": current_user.email,
                 "MotRechazo": permiso.mot_rechazo,
-                "HorasRechazadas": permiso.hor_rechazadas if permiso.mot_rechazo and permiso.tipo_permiso == 'PERMISO PERSONAL' else 0
+                "HorasRechazadas": permiso.hor_rechazadas
             }
         )
         db.commit()

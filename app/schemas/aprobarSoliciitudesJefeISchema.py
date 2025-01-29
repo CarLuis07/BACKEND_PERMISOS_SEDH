@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 class SolicitudesJefeICargarDatos(BaseModel):
-    id_permiso: str
+    id_permiso: int
     fec_solicitud: datetime
     nom_tipo_solicitud: str
     pri_nombre: str
@@ -59,16 +59,19 @@ class SolicitudesJefeIResponder(BaseModel):
         tipo_permiso = values.get('tipo_permiso')
         mot_rechazo = values.get('mot_rechazo')
         
-        # Para PERMISO PERSONAL
+        # Permiso Personal
         if tipo_permiso == 'PERMISO PERSONAL':
-            if mot_rechazo and v is None:
-                raise ValueError('Para rechazar un permiso personal se requieren las horas rechazadas')
-            if not mot_rechazo and v != 0:
-                raise ValueError('Si el permiso personal es aprobado, las horas rechazadas deben ser 0')
-                
-        # Para PERMISO OFICIAL
-        if tipo_permiso == 'PERMISO OFICIAL' and v != 0:
-            raise ValueError('Para permisos oficiales, las horas rechazadas deben ser 0')
+            if mot_rechazo:  # Rechazado
+                if not v or v == "00:00":
+                    raise ValueError('Para rechazar un permiso personal se requieren horas rechazadas')
+            else:  # Aprobado
+                if v != "00:00":
+                    raise ValueError('Si el permiso personal es aprobado, las horas rechazadas deben ser 00:00')
+        
+        # Permiso Oficial        
+        if tipo_permiso == 'PERMISO OFICIAL':
+            if v != "00:00":
+                raise ValueError('Para permisos oficiales, las horas rechazadas deben ser 00:00')
             
         return v
     
