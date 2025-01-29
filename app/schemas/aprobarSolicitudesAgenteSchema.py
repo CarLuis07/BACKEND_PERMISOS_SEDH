@@ -2,7 +2,7 @@ from pydantic import BaseModel, validator
 from typing import Optional
 from datetime import datetime
 
-class SolicitudesJefeRRHHCargarDatos(BaseModel):
+class SolicitudesAgenteCargarDatos(BaseModel):
     id_permiso: int
     fec_solicitud: datetime
     nom_tipo_solicitud: str
