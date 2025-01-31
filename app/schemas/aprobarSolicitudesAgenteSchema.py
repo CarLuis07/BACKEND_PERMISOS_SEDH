@@ -15,6 +15,8 @@ class SolicitudesAgenteCargarDatos(BaseModel):
     nom_cargo: str
     motivo:str
     hor_solicitadas: Optional[str]
+    hor_salida: Optional[str]
+    hor_retorno: Optional[str]
 
     @validator('fec_solicitud', pre=True)
     def parse_fecha(cls, value):
@@ -41,3 +43,40 @@ class SolicitudesAgenteCargarDatos(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class SolicitudesAgenteResponderHoraSalida(BaseModel):
+    id_permiso: int
+    tipo_permiso: str
+    agente_aprobacion: str
+    hor_salida: str
+
+    @validator('hor_salida')
+    def validar_formato_hora(cls, v):
+        try:
+            datetime.strptime(v, '%H:%M')
+            return v
+        except ValueError:
+            raise ValueError('El formato de hora debe ser HH:MM')
+    
+    class Config:
+        orm_mode = True
+
+
+class SolicitudesAgenteResponderHoraRetorno(BaseModel):
+    id_permiso: int
+    tipo_permiso: str
+    agente_aprobacion: str
+    hor_retorno: str
+
+    @validator('hor_retorno')
+    def validar_formato_hora(cls, v):
+        try:
+            datetime.strptime(v, '%H:%M')
+            return v
+        except ValueError:
+            raise ValueError('El formato de hora debe ser HH:MM')
+    
+    class Config:
+        orm_mode = True
+
