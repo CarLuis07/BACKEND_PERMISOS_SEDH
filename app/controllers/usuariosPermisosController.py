@@ -11,12 +11,12 @@ def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: Token
         datos = result.mappings().all()
         permisos = []
         for row in datos:
-            # Convertir fechas y horas a string
-            fec_solicitud = row["FecSolicitud"].strftime('%Y-%m-%d') if row["FecSolicitud"] else None
-            hor_salida = row["HorSalida"].strftime('%H:%M') if row["HorSalida"] else None
-            hor_retorno = row["HorRetorno"].strftime('%H:%M') if row["HorRetorno"] else None
-            hor_disponible = row["HorDisponibles"].strftime('%H:%M') if row["HorDisponibles"] else None
-            hor_permiso = row["HorasPermiso"].strftime('%H:%M') if row["HorasPermiso"] else None
+            # Validar y convertir datos
+            fec_solicitud = str(row["FecSolicitud"]) if row["FecSolicitud"] else None
+            hor_salida = str(row["HorSalida"]) if row["HorSalida"] else None
+            hor_retorno = str(row["HorRetorno"]) if row["HorRetorno"] else None
+            hor_disponible = str(row["HorDisponibles"]) if row["HorDisponibles"] else None
+            hor_permiso = str(row["HorasPermiso"]) if row["HorasPermiso"] else None
 
             permiso = ReportePermisosEmpleadosCargarDatos(
                 nom_dependencia=row["NomDependencia"],
