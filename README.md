@@ -57,7 +57,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES`
 
 6. iniciar el proyecto, ejecutar en la terminal de VSC, cambie el Host por su ip de PC o host de la varibale de entorno que coloco en el paso anterior.
 ```bash
-uvicorn app.main:app --host X.X.X.X --port 80
+uvicorn app.main:app --host X.X.X.X --port 8000
 ```
 
 ## Importante
