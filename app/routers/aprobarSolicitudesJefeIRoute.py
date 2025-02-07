@@ -12,7 +12,7 @@ router = APIRouter()
 @router.get("/aprobarSolicitudes/", response_model=List[SolicitudesJefeICargarDatos])
 def cargar_solicitudes(
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_active_user_with_role(2))
+    current_user: TokenData = Depends(get_current_active_user_with_role([2, 3]))
 ):
     try:
         solicitudes = cargar_datos_aprobar_solicitudes_jefeI(db, current_user)
@@ -25,7 +25,7 @@ def cargar_solicitudes(
 def aprobar_solicitud(
     permiso: SolicitudesJefeIResponder,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_active_user_with_role(2))
+    current_user: TokenData = Depends(get_current_active_user_with_role([2, 3]))
 ):
     try:
         responder_permiso(db, permiso, current_user)
@@ -38,7 +38,7 @@ def aprobar_solicitud(
 def rechazar_solicitud(
     permiso: SolicitudesJefeIResponder,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_active_user_with_role(2))
+    current_user: TokenData = Depends(get_current_active_user_with_role([2, 3]))
 ):
     try:
         responder_permiso(db, permiso, current_user)
