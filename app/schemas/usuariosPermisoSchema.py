@@ -33,13 +33,6 @@ class buscarEmpleadoPorEmail(BaseModel):
     estado_civil: str
     municipio: str
     departamento: str
-
-
-    @validator('email')
-    def email_is_valid(cls, v):
-        if '@' not in v:
-            raise ValueError('Email is invalid')
-        return v
     
     class Config:
         orm_mode = True
