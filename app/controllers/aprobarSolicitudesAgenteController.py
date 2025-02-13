@@ -69,21 +69,7 @@ def responder_agente_hora_salida(db: Session, permiso: SolicitudesAgenteResponde
 
 def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteResponderHoraRetorno, current_user: TokenData):
     try:
-        # Primero obtener el correo del empleado
-        result_email = db.execute(
-            text("""
-                SELECT e.CorreoInstitucional
-                FROM Permisos p
-                JOIN Empleados e ON p.IdEmpleado = e.IdEmpleado
-                WHERE p.IdPermisoPersonal = :IdPermiso
-            """),
-            {"IdPermiso": permiso.id_permiso}
-        ).first()
-
-        if not result_email:
-            raise ValueError(f"No se encontró el empleado para el permiso {permiso.id_permiso}")
-
-        # Obtener datos del permiso
+        # Obtener datos del procedimiento almacenado
         result = db.execute(
             text("EXEC CargarDatosParaSolicitudesAgenteSeguridad")
         ).mappings().all()
@@ -132,9 +118,8 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
         email_service = EmailService()
         pdf_path = email_service.generar_pdf_permiso(datos_completos)
         
-        # Usar el correo obtenido de la consulta directa
-        correo_empleado = result_email.CorreoInstitucional
-        email_service.enviar_correo_con_pdf(correo_empleado, pdf_path, datos_completos)
+        # Usar el correo del procedimiento almacenado
+        email_service.enviar_correo_con_pdf(solicitud_actual['CorreoInstitucional'], pdf_path, datos_completos)
 
         return {"message": "Solicitud procesada y correo enviado exitosamente"}
     except Exception as e:
