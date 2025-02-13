@@ -62,23 +62,24 @@ class EmailService:
         pdf.output(filepath)
         return filepath
 
-    def enviar_correo_con_pdf(self, email_destino, archivo_pdf, datos_permiso):
+    def enviar_correo_con_pdf(self, email_destino, archivo_pdf, datos_permiso: SolicitudesAgenteCargarDatos):
         msg = MIMEMultipart()
         msg['From'] = self.settings.SENDER_EMAIL
-        msg['To'] = email_destino
-        msg['Subject'] = f"Constancia de Permiso #{datos_permiso['id_permiso']}"
+        msg['To'] = self.settings.SMTP_USERNAME  # Usamos el correo configurado en .env
+        msg['Subject'] = f"Constancia de Permiso #{datos_permiso.id_permiso}"
 
         # Cuerpo del correo
+        nombre_completo = f"{datos_permiso.pri_nombre} {datos_permiso.seg_nombre} {datos_permiso.pri_apellido} {datos_permiso.seg_apellido}"
         body = f"""
-        Estimado(a) {datos_permiso['nombre_completo']},
+        Estimado(a) {nombre_completo},
 
         Se adjunta la constancia de su permiso solicitado.
 
         Detalles del permiso:
-        - Tipo de permiso: {datos_permiso['tipo_permiso']}
-        - Fecha: {datos_permiso['fecha_solicitud']}
-        - Hora de salida: {datos_permiso['hora_salida']}
-        - Hora de retorno: {datos_permiso['hora_retorno']}
+        - Tipo de permiso: {datos_permiso.nom_tipo_solicitud}
+        - Fecha: {datos_permiso.fec_solicitud.strftime('%d/%m/%Y')}
+        - Hora de salida: {datos_permiso.hor_salida if datos_permiso.hor_salida else 'N/A'}
+        - Hora de retorno: {datos_permiso.hor_retorno if datos_permiso.hor_retorno else 'N/A'}
 
         Saludos cordiales.
         """

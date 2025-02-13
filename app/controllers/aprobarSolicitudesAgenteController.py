@@ -117,9 +117,7 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
 
         email_service = EmailService()
         pdf_path = email_service.generar_pdf_permiso(datos_completos)
-        
-        # Usar el correo del procedimiento almacenado
-        email_service.enviar_correo_con_pdf(solicitud_actual['CorreoInstitucional'], pdf_path, datos_completos)
+        email_service.enviar_correo_con_pdf(current_user.email, pdf_path, datos_completos)
 
         return {"message": "Solicitud procesada y correo enviado exitosamente"}
     except Exception as e:
