@@ -35,33 +35,37 @@ def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: Token
         raise e
 
 
-def buscar_empleado_por_email(db: Session, current_user: TokenData):
+def buscar_empleado_por_email(db: Session, email: str):
     try:
         result = db.execute(
-            text("EXEC BuscarEmpleadoPorEmail")
+            text("EXEC BuscarEmpleadoPorEmail @EmailInstitucional=:EmailInstitucional"),
+            {"EmailInstitucional": email}
         )
         datos = result.mappings().all()
-        empleado = []
-        for row in datos:
-            empleado = buscarEmpleadoPorEmail(
-                email_Institucional=row["Email"],
-                Pri_nombre=row["PriNombre"],
-                Seg_nombre=row["SegNombre"],
-                Pri_apellido=row["PriApellido"],
-                Seg_apellido=row["SegApellido"],
-                fec_Ingreso=row["FecIngreso"],
-                act_laboralmnete=row["ActLaboralmente"],
-                num_identificacion=row["NumIdentificacion"],
-                num_telefono=row["NumTelefono"],
-                tip_contratacion=row["TipContratacion"],
-                Dependencia=row["Dependencia"],
-                Cargo=row["Cargo"],
-                id_jefe_inmediato=row["IdJefeInmediato"],
-                sexo=row["Sexo"],
-                estado_civil=row["EstadoCivil"],
-                municipio=row["Municipio"],
-                departamento=row["Departamento"]
-            )
+        
+        if not datos:
+            return None
+            
+        row = datos[0]  # Tomamos el primer resultado
+        empleado = buscarEmpleadoPorEmail(
+            email_Institucional=row["Email"],
+            Pri_nombre=row["PriNombre"],
+            Seg_nombre=row["SegNombre"],
+            Pri_apellido=row["PriApellido"],
+            Seg_apellido=row["SegApellido"],
+            fec_Ingreso=str(row["FecIngreso"]),
+            act_laboralmnete=row["ActLaboralmente"],
+            num_identificacion=row["NumIdentificacion"],
+            num_telefono=row["NumTelefono"],
+            tip_contratacion=row["TipContratacion"],
+            Dependencia=row["Dependencia"],
+            Cargo=row["Cargo"],
+            id_jefe_inmediato=row["IdJefeInmediato"],
+            sexo=row["Sexo"],
+            estado_civil=row["EstadoCivil"],
+            municipio=row["Municipio"],
+            departamento=row["Departamento"]
+        )
         return empleado
     except Exception as e:
         print(f"Error en controlador: {str(e)}")
