@@ -76,20 +76,16 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
         
         # Encontrar la solicitud específica
         solicitud_actual = next(
-            (item for item in result if item['id_permiso'] == permiso.id_permiso),
+            (item for item in result if item['IdPermisoPersonal'] == permiso.id_permiso),
             None
         )
         
         if not solicitud_actual:
             raise ValueError(f"No se encontró la solicitud con ID {permiso.id_permiso}")
 
-        # Actualizar el permiso con la hora de retorno
+        # Actualizar con la hora de retorno
         db.execute(
-            text("""EXEC ResponderHoraRetornoAgente 
-                @IdPermiso=:IdPermiso, 
-                @TipoPermiso=:TipoPermiso, 
-                @AgenteAprobacion=:AgenteAprobacion, 
-                @HoraRetorno=:HoraRetorno"""),
+            text("EXEC ResponderHoraRetornoAgente @IdPermiso=:IdPermiso, @TipoPermiso=:TipoPermiso, @AgenteAprobacion=:AgenteAprobacion, @HoraRetorno=:HoraRetorno"),
             {
                 "IdPermiso": permiso.id_permiso,
                 "TipoPermiso": permiso.tipo_permiso,
@@ -99,21 +95,21 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
         )
         db.commit()
 
-        # Crear objeto con los datos del procedimiento almacenado
+        # Crear objeto con los datos mapeados correctamente según el SP
         datos_completos = SolicitudesAgenteCargarDatos(
-            id_permiso=solicitud_actual['id_permiso'],
-            fec_solicitud=solicitud_actual['fec_solicitud'],
-            nom_tipo_solicitud=solicitud_actual['nom_tipo_solicitud'],
-            pri_nombre=solicitud_actual['pri_nombre'],
-            seg_nombre=solicitud_actual['seg_nombre'],
-            pri_apellido=solicitud_actual['pri_apellido'],
-            seg_apellido=solicitud_actual['seg_apellido'],
-            nom_estado=solicitud_actual['nom_estado'],
-            nom_dependencia=solicitud_actual['nom_dependencia'],
-            nom_cargo=solicitud_actual['nom_cargo'],
-            motivo=solicitud_actual['motivo'],
-            hor_solicitadas=solicitud_actual['hor_solicitadas'],
-            hor_salida=solicitud_actual['hor_salida'],
+            id_permiso=solicitud_actual['IdPermisoPersonal'],
+            fec_solicitud=solicitud_actual['FecSolicitud'],
+            nom_tipo_solicitud=solicitud_actual['NomTipo'],
+            pri_nombre=solicitud_actual['PriNombre'],
+            seg_nombre=solicitud_actual['SegNombre'],
+            pri_apellido=solicitud_actual['PriApellido'],
+            seg_apellido=solicitud_actual['SegApellido'],
+            nom_estado=solicitud_actual['NomEstado'],
+            nom_dependencia=solicitud_actual['NomDependencia'],
+            nom_cargo=solicitud_actual['NomCargo'],
+            motivo=solicitud_actual['Motivo'],
+            hor_solicitadas=solicitud_actual['HorSolicitadas'],
+            hor_salida=solicitud_actual['HorSalida'],
             hor_retorno=permiso.hor_retorno
         )
 
@@ -121,7 +117,7 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
         email_service = EmailService()
         pdf_path = email_service.generar_pdf_permiso(datos_completos)
         
-        # Obtener el correo del empleado desde los datos del procedimiento
+        # Usar el correo del SP
         correo_empleado = solicitud_actual['CorreoInstitucional']
         email_service.enviar_correo_con_pdf(correo_empleado, pdf_path, datos_completos)
 
