@@ -75,12 +75,6 @@ class EmailService:
 
         Se adjunta la constancia de su permiso solicitado.
 
-        Detalles del permiso:
-        - Tipo de permiso: {datos_permiso.nom_tipo_solicitud}
-        - Fecha: {datos_permiso.fec_solicitud.strftime('%d/%m/%Y')}
-        - Hora de salida: {datos_permiso.hor_salida if datos_permiso.hor_salida else 'N/A'}
-        - Hora de retorno: {datos_permiso.hor_retorno if datos_permiso.hor_retorno else 'N/A'}
-
         Saludos cordiales.
         """
         msg.attach(MIMEText(body, 'plain'))
