@@ -53,6 +53,16 @@ def get_current_active_user_with_role(role: int):
         return current_user
     return role_checker
 
+def get_current_active_user_with_role(allowed_roles: list):
+    async def role_checker(current_user: TokenData = Depends(get_current_user)):
+        if current_user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=403, 
+                detail=f"No tienes permisos para este recurso. Se requiere rol {allowed_roles}"
+            )
+        return current_user
+    return role_checker
+
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
