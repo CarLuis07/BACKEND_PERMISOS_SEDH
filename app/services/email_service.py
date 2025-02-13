@@ -11,25 +11,47 @@ class EmailService:
     def __init__(self):
         self.settings = EmailSettings()
 
-    def generar_pdf_permiso(self, datos_permiso):
+    def generar_pdf_permiso(self, datos_permiso: SolicitudesAgenteCargarDatos):
         pdf = FPDF()
         pdf.add_page()
+        
+        # Configuración de la página
         pdf.set_font("Arial", "B", 16)
         pdf.cell(190, 10, "CONSTANCIA DE PERMISO", 0, 1, "C")
-        
-        pdf.set_font("Arial", size=12)
         pdf.ln(10)
         
+        # Configuración para datos
+        pdf.set_font("Arial", size=12)
+        
         # Datos del permiso
-        pdf.cell(190, 10, f"Número de Permiso: {datos_permiso['id_permiso']}", 0, 1)
-        pdf.cell(190, 10, f"Fecha: {datos_permiso['fecha_solicitud']}", 0, 1)
-        pdf.cell(190, 10, f"Empleado: {datos_permiso['nombre_completo']}", 0, 1)
-        pdf.cell(190, 10, f"Tipo de Permiso: {datos_permiso['tipo_permiso']}", 0, 1)
-        pdf.cell(190, 10, f"Hora de Salida: {datos_permiso['hora_salida']}", 0, 1)
-        pdf.cell(190, 10, f"Hora de Retorno: {datos_permiso['hora_retorno']}", 0, 1)
+        datos = [
+            ("Tipo de Permiso:", datos_permiso.nom_tipo_solicitud),
+            ("Nombre del Empleado:", f"{datos_permiso.pri_nombre} {datos_permiso.seg_nombre} {datos_permiso.pri_apellido} {datos_permiso.seg_apellido}"),
+            ("Dependencia:", datos_permiso.nom_dependencia),
+            ("Cargo:", datos_permiso.nom_cargo),
+            ("Fecha de Solicitud:", datos_permiso.fec_solicitud.strftime("%d/%m/%Y")),
+            ("Hora de Salida:", datos_permiso.hor_salida if datos_permiso.hor_salida else "N/A"),
+            ("Hora de Retorno:", datos_permiso.hor_retorno if datos_permiso.hor_retorno else "N/A"),
+            ("Tiempo de Permiso:", datos_permiso.hor_solicitadas if datos_permiso.hor_solicitadas else "N/A")
+        ]
+
+        # Imprimir datos
+        for label, value in datos:
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(60, 10, label, 0, 0)
+            pdf.set_font("Arial", "", 12)
+            pdf.cell(130, 10, str(value), 0, 1)
+            pdf.ln(2)
+
+        # Espacio para firmas
+        pdf.ln(20)
+        pdf.cell(95, 10, "____________________", 0, 0, "C")
+        pdf.cell(95, 10, "____________________", 0, 1, "C")
+        pdf.cell(95, 10, "Firma Jefe Inmediato", 0, 0, "C")
+        pdf.cell(95, 10, "Firma Recursos Humanos", 0, 1, "C")
         
         # Generar nombre único para el archivo
-        filename = f"permiso_{datos_permiso['id_permiso']}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+        filename = f"permiso_{datos_permiso.id_permiso}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
         filepath = os.path.join("temp", filename)
         
         # Asegurar que el directorio temp existe

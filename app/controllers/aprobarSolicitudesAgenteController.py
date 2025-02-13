@@ -69,17 +69,21 @@ def responder_agente_hora_salida(db: Session, permiso: SolicitudesAgenteResponde
 
 def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteResponderHoraRetorno, current_user: TokenData):
     try:
-# Ejecutar el procedimiento almacenado
+        # Obtener datos usando el procedimiento almacenado
         result = db.execute(
-            text("""SELECT p.*, e.CorreoInstitucional, e.PriNombre, e.SegNombre, e.PriApellido, e.SegApellido,
-                          ts.NomTipo as TipoPermiso
-                   FROM PermisosPersonal p
-                   JOIN Empleados e ON p.IdEmpleado = e.IdEmpleado
-                   JOIN TiposSolicitud ts ON p.IdTipoSolicitud = ts.IdTipoSolicitud
-                   WHERE p.IdPermisoPersonal = :IdPermiso"""),
-            {"IdPermiso": permiso.id_permiso}
-        ).first()
-            
+            text("EXEC CargarDatosParaSolicitudesAgenteSeguridad")
+        ).mappings().all()
+        
+        # Encontrar la solicitud específica
+        solicitud_actual = next(
+            (item for item in result if item['id_permiso'] == permiso.id_permiso),
+            None
+        )
+        
+        if not solicitud_actual:
+            raise ValueError(f"No se encontró la solicitud con ID {permiso.id_permiso}")
+
+        # Actualizar el permiso con la hora de retorno
         db.execute(
             text("""EXEC ResponderHoraRetornoAgente 
                 @IdPermiso=:IdPermiso, 
@@ -94,21 +98,32 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
             }
         )
         db.commit()
-        
-        # Preparar datos para el PDF
-        datos_permiso = {
-            "id_permiso": permiso.id_permiso,
-            "fecha_solicitud": result.FecSolicitud.strftime("%Y-%m-%d"),
-            "nombre_completo": f"{result.PriNombre} {result.SegNombre} {result.PriApellido} {result.SegApellido}",
-            "tipo_permiso": result.TipoPermiso,
-            "hora_salida": result.HorSalida.strftime("%H:%M") if result.HorSalida else "N/A",
-            "hora_retorno": permiso.hor_retorno
-        }
 
-        # Enviar correo con PDF
+        # Crear objeto con los datos del procedimiento almacenado
+        datos_completos = SolicitudesAgenteCargarDatos(
+            id_permiso=solicitud_actual['id_permiso'],
+            fec_solicitud=solicitud_actual['fec_solicitud'],
+            nom_tipo_solicitud=solicitud_actual['nom_tipo_solicitud'],
+            pri_nombre=solicitud_actual['pri_nombre'],
+            seg_nombre=solicitud_actual['seg_nombre'],
+            pri_apellido=solicitud_actual['pri_apellido'],
+            seg_apellido=solicitud_actual['seg_apellido'],
+            nom_estado=solicitud_actual['nom_estado'],
+            nom_dependencia=solicitud_actual['nom_dependencia'],
+            nom_cargo=solicitud_actual['nom_cargo'],
+            motivo=solicitud_actual['motivo'],
+            hor_solicitadas=solicitud_actual['hor_solicitadas'],
+            hor_salida=solicitud_actual['hor_salida'],
+            hor_retorno=permiso.hor_retorno
+        )
+
+        # Generar y enviar PDF
         email_service = EmailService()
-        pdf_path = email_service.generar_pdf_permiso(datos_permiso)
-        email_service.enviar_correo_con_pdf(result.CorreoInstitucional, pdf_path, datos_permiso)
+        pdf_path = email_service.generar_pdf_permiso(datos_completos)
+        
+        # Obtener el correo del empleado desde los datos del procedimiento
+        correo_empleado = solicitud_actual['CorreoInstitucional']
+        email_service.enviar_correo_con_pdf(correo_empleado, pdf_path, datos_completos)
 
         return {"message": "Solicitud procesada y correo enviado exitosamente"}
     except Exception as e:
