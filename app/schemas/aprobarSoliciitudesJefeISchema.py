@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator
-from typing import Optional
+from typing import Optional, Union
 from datetime import datetime
 
 class SolicitudesJefeICargarDatos(BaseModel):
@@ -16,7 +16,7 @@ class SolicitudesJefeICargarDatos(BaseModel):
     motivo:str
     mot_rechazo: Optional[str]
     hor_solicitadas: Optional[str]
-    cat_emergencia: Optional[str]
+    cat_emergencia: Optional[Union[str, bool]] = None
 
 
     
