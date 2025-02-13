@@ -17,13 +17,13 @@ class EmailService:
         pdf = FPDF()
         pdf.add_page()
         
-        # Configuración de la página
-        pdf.set_font("Arial", "B", 16)
+        # Usar Helvetica en lugar de Arial
+        pdf.set_font("Helvetica", "B", 16)
         pdf.cell(190, 10, "CONSTANCIA DE PERMISO", 0, 1, "C")
         pdf.ln(10)
         
         # Configuración para datos
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("Helvetica", size=12)
         
         # Datos del permiso
         datos = [
@@ -39,9 +39,9 @@ class EmailService:
 
         # Imprimir datos
         for label, value in datos:
-            pdf.set_font("Arial", "B", 12)
+            pdf.set_font("Helvetica", "B", 12)
             pdf.cell(60, 10, label, 0, 0)
-            pdf.set_font("Arial", "", 12)
+            pdf.set_font("Helvetica", "", 12)
             pdf.cell(130, 10, str(value), 0, 1)
             pdf.ln(2)
 
