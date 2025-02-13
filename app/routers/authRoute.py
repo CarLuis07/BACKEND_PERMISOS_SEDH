@@ -53,7 +53,7 @@ def get_current_active_user_with_role(role: int):
         return current_user
     return role_checker
 
-def get_current_active_user_with_role(allowed_roles: list):
+def get_current_active_user_with_rol(allowed_roles: list):
     async def role_checker(current_user: TokenData = Depends(get_current_user)):
         if current_user.role not in allowed_roles:
             raise HTTPException(
