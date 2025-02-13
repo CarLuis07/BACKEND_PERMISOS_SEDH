@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from app.schemas.usuariosPermisoSchema import ReportePermisosEmpleadosCargarDatos
+from app.schemas.usuariosPermisoSchema import ReportePermisosEmpleadosCargarDatos, buscarEmpleadoPorEmail
 from app.schemas.authSchema import TokenData
 
 def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: TokenData):
@@ -30,6 +30,39 @@ def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: Token
             )
             permisos.append(permiso)
         return permisos
+    except Exception as e:
+        print(f"Error en controlador: {str(e)}")
+        raise e
+
+
+def buscar_empleado_por_email(db: Session, current_user: TokenData):
+    try:
+        result = db.execute(
+            text("EXEC BuscarEmpleadoPorEmail")
+        )
+        datos = result.mappings().all()
+        empleado = []
+        for row in datos:
+            empleado = buscarEmpleadoPorEmail(
+                email_Institucional=row["Email"],
+                Pri_nombre=row["PriNombre"],
+                Seg_nombre=row["SegNombre"],
+                Pri_apellido=row["PriApellido"],
+                Seg_apellido=row["SegApellido"],
+                fec_Ingreso=row["FecIngreso"],
+                act_laboralmnete=row["ActLaboralmente"],
+                num_identificacion=row["NumIdentificacion"],
+                num_telefono=row["NumTelefono"],
+                tip_contratacion=row["TipContratacion"],
+                Dependencia=row["Dependencia"],
+                Cargo=row["Cargo"],
+                id_jefe_inmediato=row["IdJefeInmediato"],
+                sexo=row["Sexo"],
+                estado_civil=row["EstadoCivil"],
+                municipio=row["Municipio"],
+                departamento=row["Departamento"]
+            )
+        return empleado
     except Exception as e:
         print(f"Error en controlador: {str(e)}")
         raise e

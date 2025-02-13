@@ -51,6 +51,7 @@ app.include_router(aprobarSolicitudesJefeIRoute.router, prefix="/api", tags=["ap
 app.include_router(aprobarSolicitudesJefeRRHHRoute.router, prefix="/api", tags=["aprobarSolicitudesRRHH"])
 app.include_router(aprobarSolicitudesAgenteRoute.router, prefix="/api", tags=["aprobarSolicitudesAgente"])
 app.include_router(usuariosPermisosRoute.router, prefix="/api", tags=["reportePermisos"])
+app.include_router(usuariosPermisosRoute.router, prefix="/api", tags=["buscarEmpleadoPorEmail"])
 
 if __name__ == "__main__":
     host = os.getenv('HOST')
