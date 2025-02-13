@@ -6,6 +6,8 @@ from email.mime.application import MIMEApplication
 from app.config.email_config import EmailSettings
 import os
 from datetime import datetime
+# Agregar esta importación
+from app.schemas.aprobarSolicitudesAgenteSchema import SolicitudesAgenteCargarDatos
 
 class EmailService:
     def __init__(self):
