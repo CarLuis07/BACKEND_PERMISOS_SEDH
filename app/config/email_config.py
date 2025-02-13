@@ -9,3 +9,4 @@ class EmailSettings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        extra = "allow"  # Permite campos extras en el archivo .env
