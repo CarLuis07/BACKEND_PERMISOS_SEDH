@@ -69,12 +69,10 @@ def responder_agente_hora_salida(db: Session, permiso: SolicitudesAgenteResponde
 
 def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteResponderHoraRetorno, current_user: TokenData):
     try:
-        # Obtener datos usando el procedimiento almacenado
         result = db.execute(
             text("EXEC CargarDatosParaSolicitudesAgenteSeguridad")
         ).mappings().all()
         
-        # Encontrar la solicitud específica
         solicitud_actual = next(
             (item for item in result if item['IdPermisoPersonal'] == permiso.id_permiso),
             None
@@ -82,6 +80,10 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
         
         if not solicitud_actual:
             raise ValueError(f"No se encontró la solicitud con ID {permiso.id_permiso}")
+
+        # Convertir los valores de tiempo a formato string
+        hor_solicitadas = solicitud_actual['HorSolicitadas'].strftime('%H:%M') if solicitud_actual['HorSolicitadas'] else None
+        hor_salida = solicitud_actual['HorSalida'].strftime('%H:%M') if solicitud_actual['HorSalida'] else None
 
         # Actualizar con la hora de retorno
         db.execute(
@@ -95,7 +97,6 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
         )
         db.commit()
 
-        # Crear objeto con los datos mapeados correctamente según el SP
         datos_completos = SolicitudesAgenteCargarDatos(
             id_permiso=solicitud_actual['IdPermisoPersonal'],
             fec_solicitud=solicitud_actual['FecSolicitud'],
@@ -108,16 +109,13 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
             nom_dependencia=solicitud_actual['NomDependencia'],
             nom_cargo=solicitud_actual['NomCargo'],
             motivo=solicitud_actual['Motivo'],
-            hor_solicitadas=solicitud_actual['HorSolicitadas'],
-            hor_salida=solicitud_actual['HorSalida'],
+            hor_solicitadas=hor_solicitadas,  # Valor convertido a string
+            hor_salida=hor_salida,           # Valor convertido a string
             hor_retorno=permiso.hor_retorno
         )
 
-        # Generar y enviar PDF
         email_service = EmailService()
         pdf_path = email_service.generar_pdf_permiso(datos_completos)
-        
-        # Usar el correo del SP
         correo_empleado = solicitud_actual['CorreoInstitucional']
         email_service.enviar_correo_con_pdf(correo_empleado, pdf_path, datos_completos)
 
