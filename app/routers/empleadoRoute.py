@@ -9,7 +9,7 @@ from app.schemas.authSchema import TokenData
 router = APIRouter()
 
 @router.get("/empleados/", response_model=list[EmpleadoSchema])
-async def read_empleados(db: Session = Depends(get_db), current_user: TokenData = Depends(get_current_active_user_with_role(2))):
+async def read_empleados(db: Session = Depends(get_db), current_user: TokenData = Depends(get_current_active_user_with_role(5))):
     try:
         return obtener_empleados(db)
     except Exception as e:
