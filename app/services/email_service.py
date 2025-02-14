@@ -49,8 +49,8 @@ class EmailService:
         pdf.ln(20)
         pdf.cell(95, 10, "____________________", 0, 0, "C")
         pdf.cell(95, 10, "____________________", 0, 1, "C")
-        pdf.cell(95, 10, "Firma Jefe Inmediato", 0, 0, "C")
-        pdf.cell(95, 10, "Firma Recursos Humanos", 0, 1, "C")
+        pdf.cell(95, 10, "Huella Jefe Inmediato", 0, 0, "C")
+        pdf.cell(95, 10, "Huella Jefe Recursos Humanos", 0, 1, "C")
         
         # Generar nombre único para el archivo
         filename = f"permiso_{datos_permiso.id_permiso}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
@@ -64,8 +64,8 @@ class EmailService:
 
     def enviar_correo_con_pdf(self, email_destino, archivo_pdf, datos_permiso: SolicitudesAgenteCargarDatos):
         msg = MIMEMultipart()
-        msg['From'] = self.settings.SENDER_EMAIL
-        msg['To'] = self.settings.SMTP_USERNAME  # Usamos el correo configurado en .env
+        msg['From'] = self.settings.SMTP_USERNAME  # El correo que envía (gmail)
+        msg['To'] = self.settings.SENDER_EMAIL    # El correo institucional que recibe
         msg['Subject'] = f"Constancia de Permiso #{datos_permiso.id_permiso}"
 
         # Cuerpo del correo
