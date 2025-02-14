@@ -46,7 +46,7 @@ class EmailService:
             pdf.ln(2)
 
         # Espacio para firma de RRHH (alineada a la derecha)
-        pdf.ln(80)  # Aumentado para bajar más la huella en el formato carta
+        pdf.ln(50)  # Aumentado para bajar más la huella en el formato carta
         
         # Ajustar posición de la huella para formato carta
         x_huella = 150  # Ajustado para centrar mejor en el nuevo ancho
