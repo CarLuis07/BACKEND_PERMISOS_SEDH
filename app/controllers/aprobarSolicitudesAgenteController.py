@@ -9,37 +9,33 @@ def cargar_datos_aprobar_solicitudes_agente(db: Session, current_user: TokenData
     try:
         result = db.execute(
             text("EXEC CargarDatosParaSolicitudesAgenteSeguridad")
-        )
-        datos = result.mappings().all()
+        ).mappings().all()
+        
+        # Mapear los resultados incluyendo el email_empleado
         permisos = []
-        for row in datos:
-            horas_solicitadas = row.get("HorSolicitadas")
-            horas_solicitadas_str = horas_solicitadas.strftime("%H:%M") if isinstance(horas_solicitadas, time) else None
-            hora_salida = row.get("HorSalida")
-            hora_salida_str = hora_salida.strftime("%H:%M") if isinstance(hora_salida, time) else None
-            hora_retorno = row.get("HorRetorno")
-            hora_retorno_str = hora_retorno.strftime("%H:%M") if isinstance(hora_retorno, time) else None
-
+        for row in result:
             permiso = SolicitudesAgenteCargarDatos(
-                id_permiso=row["IdPermisoPersonal"],
-                fec_solicitud=row["FecSolicitud"],
-                nom_tipo_solicitud=row["NomTipo"],
-                pri_nombre=row["PriNombre"],
-                seg_nombre=row["SegNombre"],
-                pri_apellido=row["PriApellido"],
-                seg_apellido=row["SegApellido"],
-                nom_estado=row["NomEstado"],
-                nom_dependencia=row["NomDependencia"],
-                nom_cargo=row["NomCargo"],
-                motivo=row["Motivo"],
-                hor_solicitadas=horas_solicitadas_str,
-                hor_salida=hora_salida_str,
-                hor_retorno=hora_retorno_str
+                id_permiso=row['IdPermisoPersonal'],
+                fec_solicitud=row['FecSolicitud'],
+                nom_tipo_solicitud=row['NomTipo'],
+                pri_nombre=row['PriNombre'],
+                seg_nombre=row['SegNombre'],
+                pri_apellido=row['PriApellido'],
+                seg_apellido=row['SegApellido'],
+                nom_estado=row['NomEstado'],
+                nom_dependencia=row['NomDependencia'],
+                nom_cargo=row['NomCargo'],
+                motivo=row['Motivo'],
+                hor_solicitadas=row['HorSolicitadas'].strftime('%H:%M') if row['HorSolicitadas'] else None,
+                hor_salida=row['HorSalida'].strftime('%H:%M') if row['HorSalida'] else None,
+                hor_retorno=row['HorRetorno'].strftime('%H:%M') if row['HorRetorno'] else None,
+                email_empleado=row['CorreoInstitucional']  # Agregar el correo institucional
             )
             permisos.append(permiso)
+        
         return permisos
     except Exception as e:
-        print(f"Error en controlador: {str(e)}")  # Debug
+        print(f"Error en controlador: {str(e)}")
         raise e
     
 
