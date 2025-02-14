@@ -112,12 +112,14 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
             motivo=solicitud_actual['Motivo'],
             hor_solicitadas=hor_solicitadas,
             hor_salida=hor_salida,
-            hor_retorno=permiso.hor_retorno
+            hor_retorno=permiso.hor_retorno,
+            email_empleado=solicitud_actual['CorreoInstitucional']  # Añadido el correo
         )
 
         email_service = EmailService()
         pdf_path = email_service.generar_pdf_permiso(datos_completos)
-        email_service.enviar_correo_con_pdf(current_user.email, pdf_path, datos_completos)
+        # Usar el correo del empleado directamente desde datos_completos
+        email_service.enviar_correo_con_pdf(datos_completos.email_empleado, pdf_path, datos_completos)
 
         return {"message": "Solicitud procesada y correo enviado exitosamente"}
     except Exception as e:

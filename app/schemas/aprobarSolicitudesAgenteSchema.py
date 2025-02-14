@@ -17,6 +17,7 @@ class SolicitudesAgenteCargarDatos(BaseModel):
     hor_solicitadas: Optional[str]
     hor_salida: Optional[str]
     hor_retorno: Optional[str]
+    email_empleado: str
 
     @validator('fec_solicitud', pre=True)
     def parse_fecha(cls, value):

@@ -72,8 +72,8 @@ class EmailService:
 
     def enviar_correo_con_pdf(self, email_destino, archivo_pdf, datos_permiso: SolicitudesAgenteCargarDatos):
         msg = MIMEMultipart()
-        msg['From'] = self.settings.SMTP_USERNAME  # El correo que envía (gmail)
-        msg['To'] = self.settings.SENDER_EMAIL    # El correo institucional que recibe
+        msg['From'] = self.settings.SMTP_USERNAME
+        msg['To'] = datos_permiso.email_empleado  # Usar el email del empleado
         msg['Subject'] = f"Constancia de Permiso #{datos_permiso.id_permiso}"
 
         # Cuerpo del correo
@@ -81,9 +81,8 @@ class EmailService:
         body = f"""
         Estimado(a) {nombre_completo},
 
-        Se adjunta la constancia de su permiso solicitado.
-
-        Saludos cordiales.
+        Se adjunta la constancia de su permiso solicitado, saludos cordiales.
+        *Cuidemos el Medio Ambiente y nuestros recursos en la SEDH, por favor, no imprima el PDF si no es necesario.
         """
         msg.attach(MIMEText(body, 'plain'))
 
