@@ -57,8 +57,8 @@ class EmailService:
         
         # Ajustar ancho de la línea y texto de firma
         pdf.set_font("Helvetica", "B", 16)  
-        pdf.cell(190, 10, "Katia Soanne Pinto Garcia", 0, 1, "R")
-        pdf.cell(190, 10, "Jefe Recursos Humanos", 0, 1, "R")
+        pdf.cell(190, 10, "Abg. Katia Soanne Pinto", 0, 1, "R")
+        pdf.cell(190, 10, "Subgerente Recursos Humanos", 0, 1, "R")
         
         # Generar nombre único para el archivo
         filename = f"permiso_{datos_permiso.id_permiso}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
