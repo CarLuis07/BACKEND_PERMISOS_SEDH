@@ -20,10 +20,8 @@ class EmailService:
         # Agregar imagen de fondo
         pdf.image('app/static/background.jpg', x=0, y=0, w=210)  # Tamaño A4
         
-        # Usar Helvetica en lugar de Arial
-        pdf.set_font("Helvetica", "B", 16)
-        pdf.cell(190, 10, "CONSTANCIA DE PERMISO", 0, 1, "C")
-        pdf.ln(10)
+        # Aumentar el espacio superior antes de comenzar con los datos
+        pdf.ln(40)  # Aumentado de 10 a 40 para dar más espacio
         
         # Configuración para datos
         pdf.set_font("Helvetica", size=12)
@@ -36,8 +34,7 @@ class EmailService:
             ("Cargo:", datos_permiso.nom_cargo),
             ("Fecha de Solicitud:", datos_permiso.fec_solicitud.strftime("%d/%m/%Y")),
             ("Hora de Salida:", datos_permiso.hor_salida if datos_permiso.hor_salida else "N/A"),
-            ("Hora de Retorno:", datos_permiso.hor_retorno if datos_permiso.hor_retorno else "N/A"),
-            ("Tiempo de Permiso:", datos_permiso.hor_solicitadas if datos_permiso.hor_solicitadas else "N/A")
+            ("Hora de Retorno:", datos_permiso.hor_retorno if datos_permiso.hor_retorno else "N/A")
         ]
 
         # Imprimir datos
@@ -51,13 +48,13 @@ class EmailService:
         # Espacio para firma de RRHH (alineada a la derecha)
         pdf.ln(20)
         
-        # Espacio para la imagen de la huella
-        x_huella = 150  # Posición X para la huella
+        # Espacio para la imagen de la huella (tamaño aumentado)
+        x_huella = 140  # Ajustado la posición X para centrar mejor la huella más grande
         y_huella = pdf.get_y()  # Obtener posición Y actual
-        pdf.image('app/static/huella.png', x=x_huella, y=y_huella, w=30, h=30)  # Ajusta w y h según el tamaño deseado
+        pdf.image('app/static/huella.png', x=x_huella, y=y_huella, w=45, h=45)  # Aumentado de 30x30 a 45x45
         
         # Mover el cursor después de la imagen
-        pdf.set_y(y_huella + 35)
+        pdf.set_y(y_huella + 50)  # Aumentado para ajustar al nuevo tamaño de la huella
         
         # Línea y texto de firma (alineado a la derecha)
         pdf.cell(190, 10, "____________________", 0, 1, "R")
