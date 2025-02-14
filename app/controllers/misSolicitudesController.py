@@ -10,6 +10,11 @@ def cargar_datos_ver_mis_solicitudes(db: Session, current_user: TokenData):
             {"EmailInstitucional": current_user.email}
         )
         datos = result.mappings().all()
+        
+        # Si no hay datos, retornar lista vacía en lugar de None
+        if not datos:
+            return []
+            
         permisos = []
         for row in datos:
             permiso = MisSolicitudesEmpleadoCargarDatos(
@@ -23,10 +28,9 @@ def cargar_datos_ver_mis_solicitudes(db: Session, current_user: TokenData):
             permisos.append(permiso)
         return permisos
     except Exception as e:
-        print(f"Error en controlador: {str(e)}")  # Debug
-        raise e
-    
-    
+        print(f"Error en controlador: {str(e)}")
+        return []  # Retornar lista vacía en caso de error
+
 def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: TokenData):
     try:
         result = db.execute(
@@ -34,6 +38,11 @@ def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: Token
             {"EmailInstitucional": current_user.email}
         )
         datos = result.mappings().all()
+        
+        # Si no hay datos, retornar lista vacía en lugar de None
+        if not datos:
+            return []
+            
         permisos = []
         for row in datos:
             permiso = MisSolicitudesEmergenciaEmpleadoCargarDatos(
@@ -47,5 +56,5 @@ def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: Token
             permisos.append(permiso)
         return permisos
     except Exception as e:
-        print(f"Error en controlador: {str(e)}")  # Debug
-        raise e
+        print(f"Error en controlador: {str(e)}")
+        return []  # Retornar lista vacía en caso de error
