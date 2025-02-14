@@ -14,14 +14,14 @@ class EmailService:
         self.settings = EmailSettings()
 
     def generar_pdf_permiso(self, datos_permiso: SolicitudesAgenteCargarDatos):
-        pdf = FPDF()
+        pdf = FPDF(format='Letter')  # Cambiado a tamaño carta (216x279mm)
         pdf.add_page()
         
-        # Agregar imagen de fondo
-        pdf.image('app/static/background.jpg', x=0, y=0, w=210)  # Tamaño A4
+        # Agregar imagen de fondo ajustada al tamaño carta
+        pdf.image('app/static/background.jpg', x=0, y=0, w=216)  # Ancho carta
         
         # Aumentar el espacio superior antes de comenzar con los datos
-        pdf.ln(40)  # Aumentado de 10 a 40 para dar más espacio
+        pdf.ln(50)  # Ajustado para tamaño carta
         
         # Configuración para datos
         pdf.set_font("Helvetica", size=12)
@@ -37,25 +37,28 @@ class EmailService:
             ("Hora de Retorno:", datos_permiso.hor_retorno if datos_permiso.hor_retorno else "N/A")
         ]
 
-        # Imprimir datos
+        # Imprimir datos con márgenes ajustados
         for label, value in datos:
             pdf.set_font("Helvetica", "B", 12)
-            pdf.cell(60, 10, label, 0, 0)
+            pdf.cell(65, 10, label, 0, 0)  # Ajustado el ancho de la etiqueta
             pdf.set_font("Helvetica", "", 12)
-            pdf.cell(130, 10, str(value), 0, 1)
+            pdf.cell(140, 10, str(value), 0, 1)  # Ajustado el ancho del valor
             pdf.ln(2)
 
         # Espacio para firma de RRHH (alineada a la derecha)
-        pdf.ln(50)  # Aumentado de 20 a 50 para bajar más la huella
+        pdf.ln(80)  # Aumentado para bajar más la huella en el formato carta
         
-        x_huella = 140
-        y_huella = pdf.get_y()  # Obtener posición Y actual
+        # Ajustar posición de la huella para formato carta
+        x_huella = 150  # Ajustado para centrar mejor en el nuevo ancho
+        y_huella = pdf.get_y()
         pdf.image('app/static/huella.png', x=x_huella, y=y_huella, w=45, h=45)
         
         pdf.set_y(y_huella + 50)
         
-        pdf.set_font("Helvetica", "B", 14)  # Aumentado de 12 a 14 y agregado negrita
-        pdf.cell(190, 10, "Huella Jefe Recursos Humanos", 0, 1, "R")
+        # Ajustar ancho de la línea y texto de firma
+        pdf.set_font("Helvetica", "B", 16)  # Aumentado tamaño de letra
+        pdf.cell(216, 10, "____________________", 0, 1, "R")
+        pdf.cell(216, 10, "Huella Jefe Recursos Humanos", 0, 1, "R")
         
         # Generar nombre único para el archivo
         filename = f"permiso_{datos_permiso.id_permiso}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
