@@ -46,18 +46,15 @@ class EmailService:
             pdf.ln(2)
 
         # Espacio para firma de RRHH (alineada a la derecha)
-        pdf.ln(20)
+        pdf.ln(50)  # Aumentado de 20 a 50 para bajar más la huella
         
-        # Espacio para la imagen de la huella (tamaño aumentado)
-        x_huella = 140  # Ajustado la posición X para centrar mejor la huella más grande
+        x_huella = 140
         y_huella = pdf.get_y()  # Obtener posición Y actual
-        pdf.image('app/static/huella.png', x=x_huella, y=y_huella, w=45, h=45)  # Aumentado de 30x30 a 45x45
+        pdf.image('app/static/huella.png', x=x_huella, y=y_huella, w=45, h=45)
         
-        # Mover el cursor después de la imagen
-        pdf.set_y(y_huella + 50)  # Aumentado para ajustar al nuevo tamaño de la huella
+        pdf.set_y(y_huella + 50)
         
-        # Línea y texto de firma (alineado a la derecha)
-        pdf.cell(190, 10, "____________________", 0, 1, "R")
+        pdf.set_font("Helvetica", "B", 14)  # Aumentado de 12 a 14 y agregado negrita
         pdf.cell(190, 10, "Huella Jefe Recursos Humanos", 0, 1, "R")
         
         # Generar nombre único para el archivo
