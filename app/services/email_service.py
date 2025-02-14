@@ -17,6 +17,9 @@ class EmailService:
         pdf = FPDF()
         pdf.add_page()
         
+        # Agregar imagen de fondo
+        pdf.image('app/static/background.jpg', x=0, y=0, w=210)  # Tamaño A4
+        
         # Usar Helvetica en lugar de Arial
         pdf.set_font("Helvetica", "B", 16)
         pdf.cell(190, 10, "CONSTANCIA DE PERMISO", 0, 1, "C")
@@ -45,12 +48,20 @@ class EmailService:
             pdf.cell(130, 10, str(value), 0, 1)
             pdf.ln(2)
 
-        # Espacio para firmas
+        # Espacio para firma de RRHH (alineada a la derecha)
         pdf.ln(20)
-        pdf.cell(95, 10, "____________________", 0, 0, "C")
-        pdf.cell(95, 10, "____________________", 0, 1, "C")
-        pdf.cell(95, 10, "Huella Jefe Inmediato", 0, 0, "C")
-        pdf.cell(95, 10, "Huella Jefe Recursos Humanos", 0, 1, "C")
+        
+        # Espacio para la imagen de la huella
+        x_huella = 150  # Posición X para la huella
+        y_huella = pdf.get_y()  # Obtener posición Y actual
+        pdf.image('app/static/huella.png', x=x_huella, y=y_huella, w=30, h=30)  # Ajusta w y h según el tamaño deseado
+        
+        # Mover el cursor después de la imagen
+        pdf.set_y(y_huella + 35)
+        
+        # Línea y texto de firma (alineado a la derecha)
+        pdf.cell(190, 10, "____________________", 0, 1, "R")
+        pdf.cell(190, 10, "Huella Jefe Recursos Humanos", 0, 1, "R")
         
         # Generar nombre único para el archivo
         filename = f"permiso_{datos_permiso.id_permiso}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
