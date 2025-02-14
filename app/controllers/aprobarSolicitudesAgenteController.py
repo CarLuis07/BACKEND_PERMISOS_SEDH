@@ -29,7 +29,7 @@ def cargar_datos_aprobar_solicitudes_agente(db: Session, current_user: TokenData
                 hor_solicitadas=row['HorSolicitadas'].strftime('%H:%M') if row['HorSolicitadas'] else None,
                 hor_salida=row['HorSalida'].strftime('%H:%M') if row['HorSalida'] else None,
                 hor_retorno=row['HorRetorno'].strftime('%H:%M') if row['HorRetorno'] else None,
-                email_empleado=row['CorreoInstitucional']  # Agregar el correo institucional
+                email_empleado=row['EmailInstitucional']  # Agregar el correo institucional
             )
             permisos.append(permiso)
         
@@ -109,7 +109,7 @@ def responder_agente_hora_retorno(db: Session, permiso: SolicitudesAgenteRespond
             hor_solicitadas=hor_solicitadas,
             hor_salida=hor_salida,
             hor_retorno=permiso.hor_retorno,
-            email_empleado=solicitud_actual['CorreoInstitucional']  # Añadido el correo
+            email_empleado=solicitud_actual['EmailInstitucional']  # Añadido el correo
         )
 
         email_service = EmailService()
