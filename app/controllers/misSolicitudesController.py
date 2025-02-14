@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from fastapi import status
+from fastapi.responses import JSONResponse
 from app.schemas.misSolicitudesSchema import MisSolicitudesEmpleadoCargarDatos, MisSolicitudesEmergenciaEmpleadoCargarDatos
 from app.schemas.authSchema import TokenData
 
@@ -11,25 +13,39 @@ def cargar_datos_ver_mis_solicitudes(db: Session, current_user: TokenData):
         )
         datos = result.mappings().all()
         
-        # Si no hay datos, retornar lista vacía en lugar de None
+        # Si no hay datos, retornar lista vacía con código 200
         if not datos:
-            return []
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content=[]
+            )
             
         permisos = []
         for row in datos:
-            permiso = MisSolicitudesEmpleadoCargarDatos(
-                fec_solicitud=row["FecSolicitud"],
-                nom_tipo_solicitud=row["NomTipo"],
-                nom_estado=row["NomEstado"],
-                pri_aporbacion=row["PriAprobacion"],
-                seg_aprobacion=row["SegAprobacion"],
-                mot_rechazo=row["MotRechazo"]
-            )
-            permisos.append(permiso)
-        return permisos
+            try:
+                permiso = MisSolicitudesEmpleadoCargarDatos(
+                    fec_solicitud=row.get("FecSolicitud"),
+                    nom_tipo_solicitud=row.get("NomTipo", ""),
+                    nom_estado=row.get("NomEstado", ""),
+                    pri_aporbacion=row.get("PriAprobacion"),
+                    seg_aprobacion=row.get("SegAprobacion"),
+                    mot_rechazo=row.get("MotRechazo")
+                )
+                permisos.append(permiso)
+            except Exception as row_error:
+                print(f"Error procesando fila: {str(row_error)}")
+                continue
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=[permiso.dict() for permiso in permisos]
+        )
     except Exception as e:
         print(f"Error en controlador: {str(e)}")
-        return []  # Retornar lista vacía en caso de error
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=[]
+        )
 
 def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: TokenData):
     try:
@@ -39,22 +55,36 @@ def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: Token
         )
         datos = result.mappings().all()
         
-        # Si no hay datos, retornar lista vacía en lugar de None
+        # Si no hay datos, retornar lista vacía con código 200
         if not datos:
-            return []
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content=[]
+            )
             
         permisos = []
         for row in datos:
-            permiso = MisSolicitudesEmergenciaEmpleadoCargarDatos(
-                fec_solicitud=row["FecSolicitud"],
-                nom_tipo_solicitud=row["NomTipo"],
-                nom_estado=row["NomEstado"],
-                pri_aporbacion=row["PriAprobacion"],
-                seg_aprobacion=row["SegAprobacion"],
-                mot_rechazo=row["MotRechazo"]
-            )
-            permisos.append(permiso)
-        return permisos
+            try:
+                permiso = MisSolicitudesEmergenciaEmpleadoCargarDatos(
+                    fec_solicitud=row.get("FecSolicitud"),
+                    nom_tipo_solicitud=row.get("NomTipo", ""),
+                    nom_estado=row.get("NomEstado", ""),
+                    pri_aporbacion=row.get("PriAprobacion"),
+                    seg_aprobacion=row.get("SegAprobacion"),
+                    mot_rechazo=row.get("MotRechazo")
+                )
+                permisos.append(permiso)
+            except Exception as row_error:
+                print(f"Error procesando fila: {str(row_error)}")
+                continue
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=[permiso.dict() for permiso in permisos]
+        )
     except Exception as e:
         print(f"Error en controlador: {str(e)}")
-        return []  # Retornar lista vacía en caso de error
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=[]
+        )
