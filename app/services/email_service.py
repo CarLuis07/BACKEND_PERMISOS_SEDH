@@ -49,7 +49,7 @@ class EmailService:
         pdf.ln(30)  # Aumentado para bajar más la huella en el formato carta
         
         
-        x_huella = 120  # Ajustado para centrar mejor en el nuevo ancho
+        x_huella = 130  # Ajustado para centrar mejor en el nuevo ancho
         y_huella = pdf.get_y()
         pdf.image('app/static/firmaSello.png', x=x_huella, y=y_huella, w=65, h=65)
         
@@ -57,8 +57,8 @@ class EmailService:
         
         # Ajustar ancho de la línea y texto de firma
         pdf.set_font("Helvetica", "B", 16)  
-        pdf.cell(190, 10, "Abg. Katia Soanne Pinto", 0, 1, "R")
-        pdf.cell(190, 10, "Subgerente Recursos Humanos", 0, 1, "R")
+        pdf.cell(190, 8, "Abg. Katia Soanne Pinto", 0, 1, "R")
+        pdf.cell(200, 8, "Subgerente Recursos Humanos", 0, 1, "R")
         
         # Generar nombre único para el archivo
         filename = f"permiso_{datos_permiso.id_permiso}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
