@@ -23,18 +23,18 @@ def cargar_datos_ver_mis_solicitudes(db: Session, current_user: TokenData):
         permisos = []
         for row in datos:
             try:
-                permiso = MisSolicitudesEmpleadoCargarDatos(
-                    fec_solicitud=row.get("FecSolicitud"),
-                    nom_tipo_solicitud=row.get("NomTipo", ""),
-                    nom_estado=row.get("NomEstado", ""),
-                    pri_aporbacion=row.get("PriAprobacion"),
-                    seg_aprobacion=row.get("SegAprobacion"),
-                    mot_rechazo=row.get("MotRechazo")
-                )
-                # Convertir el modelo a diccionario y formatear la fecha
-                permiso_dict = permiso.model_dump()
-                permiso_dict['fec_solicitud'] = permiso_dict['fec_solicitud'].strftime('%Y-%m-%d %H:%M:%S')
-                permisos.append(permiso_dict)
+                # Formatear la fecha antes de crear el objeto Pydantic
+                fecha_formateada = row.get("FecSolicitud").strftime('%Y-%m-%d %H:%M:%S') if row.get("FecSolicitud") else None
+                
+                permiso = {
+                    "fec_solicitud": fecha_formateada,
+                    "nom_tipo_solicitud": row.get("NomTipo", ""),
+                    "nom_estado": row.get("NomEstado", ""),
+                    "pri_aporbacion": row.get("PriAprobacion"),
+                    "seg_aprobacion": row.get("SegAprobacion"),
+                    "mot_rechazo": row.get("MotRechazo")
+                }
+                permisos.append(permiso)
             except Exception as row_error:
                 print(f"Error procesando fila: {str(row_error)}")
                 continue
@@ -67,18 +67,18 @@ def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: Token
         permisos = []
         for row in datos:
             try:
-                permiso = MisSolicitudesEmergenciaEmpleadoCargarDatos(
-                    fec_solicitud=row.get("FecSolicitud"),
-                    nom_tipo_solicitud=row.get("NomTipo", ""),
-                    nom_estado=row.get("NomEstado", ""),
-                    pri_aporbacion=row.get("PriAprobacion"),
-                    seg_aprobacion=row.get("SegAprobacion"),
-                    mot_rechazo=row.get("MotRechazo")
-                )
-                # Convertir el modelo a diccionario y formatear la fecha
-                permiso_dict = permiso.model_dump()
-                permiso_dict['fec_solicitud'] = permiso_dict['fec_solicitud'].strftime('%Y-%m-%d %H:%M:%S')
-                permisos.append(permiso_dict)
+                # Formatear la fecha antes de crear el objeto Pydantic
+                fecha_formateada = row.get("FecSolicitud").strftime('%Y-%m-%d %H:%M:%S') if row.get("FecSolicitud") else None
+                
+                permiso = {
+                    "fec_solicitud": fecha_formateada,
+                    "nom_tipo_solicitud": row.get("NomTipo", ""),
+                    "nom_estado": row.get("NomEstado", ""),
+                    "pri_aporbacion": row.get("PriAprobacion"),
+                    "seg_aprobacion": row.get("SegAprobacion"),
+                    "mot_rechazo": row.get("MotRechazo")
+                }
+                permisos.append(permiso)
             except Exception as row_error:
                 print(f"Error procesando fila: {str(row_error)}")
                 continue
