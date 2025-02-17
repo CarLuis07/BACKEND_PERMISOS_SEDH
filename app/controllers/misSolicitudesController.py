@@ -4,6 +4,7 @@ from fastapi import status
 from fastapi.responses import JSONResponse
 from app.schemas.misSolicitudesSchema import MisSolicitudesEmpleadoCargarDatos, MisSolicitudesEmergenciaEmpleadoCargarDatos
 from app.schemas.authSchema import TokenData
+from datetime import datetime
 
 def cargar_datos_ver_mis_solicitudes(db: Session, current_user: TokenData):
     try:
@@ -13,7 +14,6 @@ def cargar_datos_ver_mis_solicitudes(db: Session, current_user: TokenData):
         )
         datos = result.mappings().all()
         
-        # Si no hay datos, retornar lista vacía con código 200
         if not datos:
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
@@ -31,14 +31,17 @@ def cargar_datos_ver_mis_solicitudes(db: Session, current_user: TokenData):
                     seg_aprobacion=row.get("SegAprobacion"),
                     mot_rechazo=row.get("MotRechazo")
                 )
-                permisos.append(permiso)
+                # Convertir el modelo a diccionario y formatear la fecha
+                permiso_dict = permiso.model_dump()
+                permiso_dict['fec_solicitud'] = permiso_dict['fec_solicitud'].strftime('%Y-%m-%d %H:%M:%S')
+                permisos.append(permiso_dict)
             except Exception as row_error:
                 print(f"Error procesando fila: {str(row_error)}")
                 continue
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,
-            content=[permiso.dict() for permiso in permisos]
+            content=permisos
         )
     except Exception as e:
         print(f"Error en controlador: {str(e)}")
@@ -55,7 +58,6 @@ def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: Token
         )
         datos = result.mappings().all()
         
-        # Si no hay datos, retornar lista vacía con código 200
         if not datos:
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
@@ -73,14 +75,17 @@ def cargar_datos_ver_mis_solicitudes_emergencia(db: Session, current_user: Token
                     seg_aprobacion=row.get("SegAprobacion"),
                     mot_rechazo=row.get("MotRechazo")
                 )
-                permisos.append(permiso)
+                # Convertir el modelo a diccionario y formatear la fecha
+                permiso_dict = permiso.model_dump()
+                permiso_dict['fec_solicitud'] = permiso_dict['fec_solicitud'].strftime('%Y-%m-%d %H:%M:%S')
+                permisos.append(permiso_dict)
             except Exception as row_error:
                 print(f"Error procesando fila: {str(row_error)}")
                 continue
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,
-            content=[permiso.dict() for permiso in permisos]
+            content=permisos
         )
     except Exception as e:
         print(f"Error en controlador: {str(e)}")
