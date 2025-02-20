@@ -14,7 +14,8 @@ load_dotenv()
 
 # Configuración de CORS
 origins = [
-    "*"
+    "http://localhost:4200",
+    "http://192.168.180.26:8000"
 ]
 
 app.add_middleware(
