@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Form
+from sqlalchemy.orm import Session
+from app.controllers.authController import authenticate_user, change_password
+from app.database.connection import get_db
+from app.schemas.authSchema import Token, TokenData
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from app.schemas.authSchema import Token, TokenData
-from app.controllers.authController import authenticate_user
-from app.database.connection import get_db
 import os
 
 router = APIRouter()
@@ -77,3 +77,18 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": user.email, "role": user.role}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/change-password")
+async def change_password_endpoint(
+    email: str = Form(...),
+    current_password: str = Form(...),
+    new_password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    success = change_password(db, email, current_password, new_password)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to change password"
+        )
+    return {"message": "Password changed successfully"}

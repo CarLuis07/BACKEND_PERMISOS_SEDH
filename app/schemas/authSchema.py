@@ -11,3 +11,8 @@ class TokenData(BaseModel):
 class User(BaseModel):
     email: str
     role: int
+
+class ChangePasswordRequest(BaseModel):
+    email: str
+    current_password: str
+    new_password: str

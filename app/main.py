@@ -3,11 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.routers import empleadoRoute, permisoPersonalRoute, authRoute, permisoOficialRoute, misSolicitudesRoute, aprobarSolicitudesJefeIRoute, aprobarSolicitudesJefeRRHHRoute, aprobarSolicitudesAgenteRoute, usuariosPermisosRoute
-from app.auth.oauth2 import oauth2_scheme  # Import oauth2_scheme
-from app.schemas import TokenData  # Import TokenData
+from app.auth.oauth2 import oauth2_scheme  
+from app.schemas import TokenData 
 import uvicorn
 import os
 from dotenv import load_dotenv
+from jose import JWTError, jwt
 
 app = FastAPI()
 load_dotenv()
@@ -15,7 +16,8 @@ load_dotenv()
 # Configuración de CORS
 origins = [
     "http://localhost:4200",
-    "http://192.168.180.26:8000"
+    "http://192.168.180.26:8000",
+    "http://rrhh.sedh.gob.hn"
 ]
 
 app.add_middleware(
@@ -28,8 +30,13 @@ app.add_middleware(
 
 # Ejemplo de dependencia para validar encabezados de autenticación
 def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=[os.getenv('ALGORITHM')])
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception
@@ -55,7 +62,16 @@ app.include_router(usuariosPermisosRoute.router, prefix="/api", tags=["reportePe
 app.include_router(usuariosPermisosRoute.router, prefix="/api", tags=["buscarEmpleadoPorEmail"])
 
 if __name__ == "__main__":
-    host = os.getenv('HOST')
-    port = int(os.getenv('PORT'))
+    import uvicorn
+    host = os.getenv('HOST', '0.0.0.0')  
+    port = int(os.getenv('PORT', 8000))
 
-    uvicorn.run('app.main:app', host=host, port=port)
+    config = uvicorn.Config(
+        app,
+        host=host,
+        port=port,
+        reload=False  
+    )
+    
+    server = uvicorn.Server(config)
+    server.run()
