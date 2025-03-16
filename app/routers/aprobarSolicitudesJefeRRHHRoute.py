@@ -5,14 +5,14 @@ from app.database.connection import get_db
 from app.schemas.aprobarSolicitudesJefeRRHHSchema import SolicitudesJefeRRHHCargarDatos, SolicitudesJefeRRHHResponder
 from app.schemas.authSchema import TokenData
 from app.controllers.aprobarSolicitudesJefeRRHHCcontroller import cargar_datos_aprobar_solicitudes_jefeRRHH, responder_permiso
-from app.routers.authRoute import get_current_active_user_with_role
+from app.routers.authRoute import get_current_active_user_with_rol
 
 router = APIRouter()
 
 @router.get("/aprobarSolicitudesRRHH/", response_model=List[SolicitudesJefeRRHHCargarDatos])
 def cargar_solicitudes(
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_active_user_with_role(3))
+    current_user: TokenData = Depends(get_current_active_user_with_rol([3, 5]))
 ):
     try:
         solicitudes = cargar_datos_aprobar_solicitudes_jefeRRHH(db, current_user)
@@ -25,7 +25,7 @@ def cargar_solicitudes(
 def aprobar_solicitud(
     permiso: SolicitudesJefeRRHHResponder,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_active_user_with_role(3))
+    current_user: TokenData = Depends(get_current_active_user_with_rol([3, 5]))
 ):
     try:
         responder_permiso(db, permiso, current_user)
@@ -38,7 +38,7 @@ def aprobar_solicitud(
 def rechazar_solicitud(
     permiso: SolicitudesJefeRRHHResponder,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_active_user_with_role(3))
+    current_user: TokenData = Depends(get_current_active_user_with_rol([3, 5]))
 ):
     try:
         responder_permiso(db, permiso, current_user)
