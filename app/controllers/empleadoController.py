@@ -1,38 +1,52 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.schemas.empleadoSchema import Empleado as EmpleadoSchema
-from datetime import datetime
+from app.schemas.empleadoSchema import EmpleadoDetalle
+from datetime import datetime, time
 
-def obtener_empleados(db: Session):
+
+def obtener_empleado_por_email(db: Session, email_institucional: str):
     try:
-        result = db.execute(text("EXEC dbo.ObtenerEmpleados")).mappings().all()
-        empleados = []
-        for row in result:
-            fech_ingreso_laboral = row["FecIngLaborar"]
-            if isinstance(fech_ingreso_laboral, str):
-                try:
-                    fech_ingreso_laboral = datetime.strptime(fech_ingreso_laboral, '%Y-%m-%d %H:%M:%S')
-                except ValueError:
-                    fech_ingreso_laboral = datetime.strptime(fech_ingreso_laboral, '%Y-%m-%d')
-            empleado_data = {
-                "email_institucional": row["EmailInstitucional"],
-                "pri_nombre": row["PriNombre"],
-                "seg_nombre": row["SegNombre"],
-                "pri_apellido": row["PriApellido"],
-                "seg_apellido": row["SegApellido"],
-                "fech_ingreso_laboral": fech_ingreso_laboral.strftime('%Y-%m-%d'),
-                "act_laboral": row.get("ActLaboralmente"),
-                "num_identidad": row["NumIdentidad"],
-                "num_telefono": row.get("NumTelefono"),
-                "id_tipo_contratacion": row["TipoContratacion"],
-                "id_cargo": row["Cargo"],
-                "id_sup_inmediato": row["IdSupInmediato"],
-                "id_sexo": row["Sexo"],
-                "id_estado_civil": row["EstadoCivil"],
-                "id_municipio": row.get("Municipio")
-            }
-            empleados.append(EmpleadoSchema(**empleado_data))
-        return empleados
+        query = text("EXEC dbo.BuscarEmpleadoPorEmail @EmailInstitucional=:email")
+        result = db.execute(query, {"email": email_institucional}).mappings().first()
+        
+        if not result:
+            return None
+            
+        fech_ingreso_laboral = result["FecIngLaborar"]
+        if isinstance(fech_ingreso_laboral, str):
+            try:
+                fech_ingreso_laboral = datetime.strptime(fech_ingreso_laboral, '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                fech_ingreso_laboral = datetime.strptime(fech_ingreso_laboral, '%Y-%m-%d')
+                
+        # Convertir horas disponibles a formato string "HH:MM"
+        hor_disponibles = result.get("HorDisponibles")
+        if isinstance(hor_disponibles, time):
+            hor_disponibles = f"{hor_disponibles.hour:02d}:{hor_disponibles.minute:02d}"
+        
+        empleado_data = {
+            "email_institucional": result["EmailInstitucional"],
+            "pri_nombre": result["PriNombre"],
+            "seg_nombre": result["SegNombre"],
+            "pri_apellido": result["PriApellido"],
+            "seg_apellido": result["SegApellido"],
+            "fech_ingreso_laboral": fech_ingreso_laboral.strftime('%Y-%m-%d'),
+            "act_laboral": result.get("ActLaboralmente"),
+            "num_identidad": result["NumIdentidad"],
+            "num_telefono": result.get("NumTelefono"),
+            "tipo_contratacion": result.get("TipoContratacion"),
+            "nom_dependencia": result.get("NomDependencia"),
+            "cargo": result.get("Cargo"),
+            "sexo": result.get("Sexo"),
+            "estado_civil": result.get("EstadoCivil"),
+            "departamento": result.get("Departamento"),
+            "municipio": result.get("Municipio"),
+            "id_sup_inmediato": result.get("IdSupInmediato"),
+            "hor_disponibles": hor_disponibles
+        }
+        
+        return EmpleadoDetalle(**empleado_data)
     except Exception as e:
         raise e
 

@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class EmpleadoBase(BaseModel):
     email_institucional: str
@@ -40,3 +41,30 @@ class EmpleadoCreate(BaseModel):
 class Empleado(EmpleadoBase):
     class Config:
         orm_mode = True
+
+
+class EmpleadoDetalle(BaseModel):
+    email_institucional: str
+    pri_nombre: str
+    seg_nombre: str
+    pri_apellido: str
+    seg_apellido: str
+    fech_ingreso_laboral: str
+    act_laboral: Optional[int] = None
+    num_identidad: str
+    num_telefono: Optional[str] = None
+    tipo_contratacion: Optional[str] = None
+    nom_dependencia: Optional[str] = None
+    cargo: Optional[str] = None
+    sexo: Optional[str] = None
+    estado_civil: Optional[str] = None
+    departamento: Optional[str] = None
+    municipio: Optional[str] = None
+    id_sup_inmediato: Optional[str] = None
+    hor_disponibles: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class EmpleadoEmailRequest(BaseModel):
+    email_institucional: str
