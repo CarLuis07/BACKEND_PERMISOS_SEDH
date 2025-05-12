@@ -7,7 +7,7 @@ from app.database.connection import get_db
 from app.schemas.usuariosPermisoSchema import buscarEmpleadoPorEmail, ReportePermisosEmpleadosCargarDatos
 from app.schemas.authSchema import TokenData
 from app.controllers.usuariosPermisosController import buscar_empleado_por_email, cargar_datos_ver_reporte_permisos_empleados
-from app.routers.authRoute import get_current_active_user_with_role
+from app.routers.authRoute import get_current_active_user_with_role, get_current_active_user_with_rol
 
 
 router = APIRouter()
@@ -15,7 +15,8 @@ router = APIRouter()
 
 @router.get("/reportePermisos/", response_model=List[ReportePermisosEmpleadosCargarDatos])
 def cargar_permisos(db: Session = Depends(get_db), 
-                    current_user: TokenData = Depends(get_current_active_user_with_role(5))):
+                    current_user: TokenData = Depends(get_current_active_user_with_rol([3, 5]))
+                    ):
     try:
         permiso = cargar_datos_ver_reporte_permisos_empleados(db, current_user)
         if permiso:
