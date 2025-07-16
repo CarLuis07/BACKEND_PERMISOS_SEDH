@@ -20,3 +20,5 @@ class PermisoPersonal(Base):
     hora_salida = Column(Time, nullable=True)
     hora_retorno = Column(Time, nullable=True)
     guardia_turno = Column(String(50), index=True)
+    
+    #hola
