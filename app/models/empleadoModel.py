@@ -19,3 +19,5 @@ class Empleado(Base):
     id_sexo = Column(Integer, index=True, nullable=False)
     id_estado_civil = Column(Integer, index=True, nullable=False)
     id_municipio = Column(Integer, index=True, nullable=True)
+    
+    #drdtfy
