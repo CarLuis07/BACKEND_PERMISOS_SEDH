@@ -1,4 +1,10 @@
 from fastapi import FastAPI, Depends
+from app.modules.auth.router import router as auth_router
+from app.modules.employees.router import router as employee_router
+from app.modules.permissions.personal.router import router as personal_permission_router
+from app.modules.permissions.oficial.router import router as official_permission_router
+
+from app.modules.reports.router import router as report_router
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
@@ -41,8 +47,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 def read_root(db: Session = Depends(get_db)):
     return {"message": "Conexión exitosa a la base de datos"}
 
-app.include_router(authRoute.router, prefix="/api", tags=["auth"])
-app.include_router(empleadoRoute.router, prefix="/api", tags=["empleados"])
+app.include_router(auth_router, prefix="/api", tags=["auth"])
+app.include_router(employee_router, prefix="/api", tags=["empleados"])
+app.include_router(report_router, prefix="/api", tags=["reportePermisos"])
+app.include_router(personal_permission_router, prefix="/api", tags=["permisoPersonal"])
+app.include_router(official_permission_router, prefix="/api", tags=["permisoOficial"])
+
 app.include_router(permisoPersonalRoute.router, prefix="/api", tags=["permisoPersonal"])
 app.include_router(permisoOficialRoute.router, prefix="/api", tags=["permisoOficial"])
 app.include_router(misSolicitudesRoute.router, prefix="/api", tags=["misSolicitudes"])
@@ -50,8 +60,8 @@ app.include_router(misSolicitudesRoute.router, prefix="/api", tags=["misSolicitu
 app.include_router(aprobarSolicitudesJefeIRoute.router, prefix="/api", tags=["aprobarSolicitudes"])
 app.include_router(aprobarSolicitudesJefeRRHHRoute.router, prefix="/api", tags=["aprobarSolicitudesRRHH"])
 app.include_router(aprobarSolicitudesAgenteRoute.router, prefix="/api", tags=["aprobarSolicitudesAgente"])
-app.include_router(usuariosPermisosRoute.router, prefix="/api", tags=["reportePermisos"])
 app.include_router(usuariosPermisosRoute.router, prefix="/api", tags=["buscarEmpleadoPorEmail"])
+
 
 if __name__ == "__main__":
     host = os.getenv('HOST')
