@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.schemas.usuariosPermisoSchema import ReportePermisosEmpleadosCargarDatos, buscarEmpleadoPorEmail
 from app.schemas.authSchema import TokenData
+from datetime import time
 
 def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: TokenData):
     try:
@@ -46,25 +47,42 @@ def buscar_empleado_por_email(db: Session, email: str):
         if not datos:
             return None
             
-        row = datos[0]  # Tomamos el primer resultado
+        row = datos[0]
+        
+        # Convertir explícitamente a string los campos problemáticos
+        if row["ActLaboralmente"] is True:
+            act_laboralmente_str = "1"
+        elif row["ActLaboralmente"] is False:
+            act_laboralmente_str = "0"
+        else:
+            act_laboralmente_str = str(row["ActLaboralmente"])
+        
+        horas_disponibles_str = None
+        if "HorDisponibles" in row and row["HorDisponibles"] is not None:
+            if isinstance(row["HorDisponibles"], time):
+                horas_disponibles_str = row["HorDisponibles"].strftime('%H:%M:%S')
+            else:
+                horas_disponibles_str = str(row["HorDisponibles"])
+        
         empleado = buscarEmpleadoPorEmail(
-            email_Institucional=row["Email"],
+            email_Institucional=row["EmailInstitucional"],
             Pri_nombre=row["PriNombre"],
             Seg_nombre=row["SegNombre"],
             Pri_apellido=row["PriApellido"],
             Seg_apellido=row["SegApellido"],
-            fec_Ingreso=str(row["FecIngreso"]),
-            act_laboralmnete=row["ActLaboralmente"],
-            num_identificacion=row["NumIdentificacion"],
+            fec_Ingreso=str(row["FecIngLaborar"]),
+            act_laboralmente=act_laboralmente_str,  # Convertido explícitamente a string
+            num_identificacion=row["NumIdentidad"],
             num_telefono=row["NumTelefono"],
-            tip_contratacion=row["TipContratacion"],
-            Dependencia=row["Dependencia"],
+            tip_contratacion=row["TipoContratacion"],
+            Dependencia=row["NomDependencia"],
             Cargo=row["Cargo"],
-            id_jefe_inmediato=row["IdJefeInmediato"],
             sexo=row["Sexo"],
             estado_civil=row["EstadoCivil"],
+            departamento=row["Departamento"],
             municipio=row["Municipio"],
-            departamento=row["Departamento"]
+            id_jefe_inmediato=str(row["IdSupInmediato"]),  # Asegurarse de que sea string
+            horas_disponibles=horas_disponibles_str  # Convertido explícitamente a string
         )
         return empleado
     except Exception as e:
