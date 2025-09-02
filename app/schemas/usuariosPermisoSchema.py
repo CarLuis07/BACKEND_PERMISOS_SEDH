@@ -1,6 +1,5 @@
 from pydantic import BaseModel, validator
-from typing import Optional, Any
-from datetime import time
+from typing import Optional
 
 class ReportePermisosEmpleadosCargarDatos(BaseModel):
     nom_dependencia: str
@@ -23,18 +22,17 @@ class buscarEmpleadoPorEmail(BaseModel):
     Pri_apellido: str
     Seg_apellido: str
     fec_Ingreso: str
-    act_laboralmente: str  
+    act_laboralmnete: str
     num_identificacion: str
     num_telefono: str
     tip_contratacion: str
     Dependencia: str
     Cargo: str
+    id_jefe_inmediato: str
     sexo: str
     estado_civil: str
-    departamento: str
     municipio: str
-    id_jefe_inmediato: str
-    horas_disponibles: Optional[str] = None  
+    departamento: str
     
     class Config:
         orm_mode = True
