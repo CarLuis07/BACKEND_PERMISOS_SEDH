@@ -9,30 +9,48 @@ def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: Token
             text("EXEC CargarReportePermisosEmpleadosMes")
         )
         datos = result.mappings().all()
+        
+        if not datos:
+            return []
+            
         permisos = []
         for row in datos:
-            # Validar y convertir datos
-            fec_solicitud = str(row["FecSolicitud"]) if row["FecSolicitud"] else None
-            hor_salida = str(row["HorSalida"]) if row["HorSalida"] else None
-            hor_retorno = str(row["HorRetorno"]) if row["HorRetorno"] else None
-            hor_disponible = str(row["HorDisponibles"]) if row["HorDisponibles"] else None
-            hor_permiso = str(row["HorasPermiso"]) if row["HorasPermiso"] else None
+            try:
+                # Validar que existan todas las claves necesarias
+                required_keys = ["NomDependencia", "Empleado", "FecSolicitud", "NomTipo"]
+                for key in required_keys:
+                    if key not in row:
+                        print(f"Error: Falta la columna {key} en el resultado")
+                        continue
+                
+                # Validar y convertir datos con manejo de errores
+                fec_solicitud = str(row["FecSolicitud"]) if row.get("FecSolicitud") else None
+                hor_salida = str(row.get("HorSalida")) if row.get("HorSalida") else None
+                hor_retorno = str(row.get("HorRetorno")) if row.get("HorRetorno") else None
+                hor_disponible = str(row.get("HorDisponibles")) if row.get("HorDisponibles") else None
+                hor_permiso = str(row.get("HorasPermiso")) if row.get("HorasPermiso") else None
 
-            permiso = ReportePermisosEmpleadosCargarDatos(
-                nom_dependencia=row["NomDependencia"],
-                empleado=row["Empleado"],
-                fec_solicitud=fec_solicitud,
-                nom_tipo=row["NomTipo"],
-                hor_salida=hor_salida,
-                hor_retorno=hor_retorno,
-                hor_permiso=hor_permiso,
-                hor_disponible=hor_disponible
-            )
-            permisos.append(permiso)
+                permiso = ReportePermisosEmpleadosCargarDatos(
+                    nom_dependencia=row["NomDependencia"],
+                    empleado=row["Empleado"],
+                    fec_solicitud=fec_solicitud,
+                    nom_tipo=row["NomTipo"],
+                    hor_salida=hor_salida,
+                    hor_retorno=hor_retorno,
+                    hor_permiso=hor_permiso,
+                    hor_disponible=hor_disponible
+                )
+                permisos.append(permiso)
+            except Exception as row_error:
+                print(f"Error procesando fila: {str(row_error)}")
+                # Continuar con la siguiente fila en caso de error
+                continue
+                
         return permisos
     except Exception as e:
-        print(f"Error en controlador: {str(e)}")
-        raise e
+        print(f"Error en controlador de reportePermisos: {str(e)}")
+        # En lugar de propagar el error, devolver lista vacía para evitar error 500
+        return []
 
 
 def buscar_empleado_por_email(db: Session, email: str):
