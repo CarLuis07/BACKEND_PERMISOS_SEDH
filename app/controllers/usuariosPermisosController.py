@@ -3,10 +3,11 @@ from sqlalchemy import text
 from app.schemas.usuariosPermisoSchema import ReportePermisosEmpleadosCargarDatos, buscarEmpleadoPorEmail
 from app.schemas.authSchema import TokenData
 
-def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: TokenData):
+def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: TokenData, anio: int, mes: int):
     try:
         result = db.execute(
-            text("EXEC CargarReportePermisosEmpleadosMes")
+            text("EXEC CargarReportePermisosEmpleadosMes @Mes=:Mes, @Anio=:Anio"),
+            {"Mes": mes, "Anio": anio}
         )
         datos = result.mappings().all()
         

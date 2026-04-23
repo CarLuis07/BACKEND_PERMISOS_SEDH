@@ -14,11 +14,11 @@ router = APIRouter()
 
 
 @router.get("/reportePermisos/", response_model=List[ReportePermisosEmpleadosCargarDatos])
-def cargar_permisos(db: Session = Depends(get_db), 
+def cargar_permisos(anio: int, mes: int, db: Session = Depends(get_db), 
                     current_user: TokenData = Depends(get_current_active_user_with_rol([3, 5]))
                     ):
     try:
-        permiso = cargar_datos_ver_reporte_permisos_empleados(db, current_user)
+        permiso = cargar_datos_ver_reporte_permisos_empleados(db, current_user, anio, mes)
         if permiso:
             return permiso
         raise HTTPException(status_code=404, detail="reportes no encontrados")
