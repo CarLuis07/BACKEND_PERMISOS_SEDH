@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from app.schemas.usuariosPermisoSchema import ReportePermisosEmpleadosCargarDatos, buscarEmpleadoPorEmail
+from app.schemas.usuariosPermisoSchema import ReportePermisosEmpleadosCargarDatos, buscarEmpleadoPorEmail, ActualizarHorasDisponiblesRequest
 from app.schemas.authSchema import TokenData
 
 def cargar_datos_ver_reporte_permisos_empleados(db: Session, current_user: TokenData, anio: int, mes: int):
@@ -88,4 +88,22 @@ def buscar_empleado_por_email(db: Session, email: str):
         return empleado
     except Exception as e:
         print(f"Error en controlador: {str(e)}")
+        raise e
+
+
+def actualizar_horas_disponibles(db: Session, datos: ActualizarHorasDisponiblesRequest):
+    try:
+        db.execute(
+            text("EXEC ActualizarHorasDisponiblesEmpleado @EmailInstitucional=:EmailInstitucional, @HorDisponibles=:HorDisponibles, @ActualizadoPor=:ActualizadoPor"),
+            {
+                "EmailInstitucional": datos.email_institucional,
+                "HorDisponibles": datos.hor_disponibles,
+                "ActualizadoPor": datos.actualizado_por
+            }
+        )
+        db.commit()
+        return {"message": "Horas disponibles actualizadas correctamente"}
+    except Exception as e:
+        db.rollback()
+        print(f"Error al actualizar horas disponibles: {str(e)}")
         raise e

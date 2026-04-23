@@ -15,6 +15,12 @@ class ReportePermisosEmpleadosCargarDatos(BaseModel):
         orm_mode = True
 
 
+class ActualizarHorasDisponiblesRequest(BaseModel):
+    email_institucional: str
+    hor_disponibles: str
+    actualizado_por: str
+
+
 class buscarEmpleadoPorEmail(BaseModel):
     email_Institucional: str
     Pri_nombre: str

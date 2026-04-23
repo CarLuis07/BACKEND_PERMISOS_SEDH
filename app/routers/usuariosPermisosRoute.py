@@ -4,9 +4,9 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from typing import List
 from app.database.connection import get_db
-from app.schemas.usuariosPermisoSchema import buscarEmpleadoPorEmail, ReportePermisosEmpleadosCargarDatos
+from app.schemas.usuariosPermisoSchema import buscarEmpleadoPorEmail, ReportePermisosEmpleadosCargarDatos, ActualizarHorasDisponiblesRequest
 from app.schemas.authSchema import TokenData
-from app.controllers.usuariosPermisosController import buscar_empleado_por_email, cargar_datos_ver_reporte_permisos_empleados
+from app.controllers.usuariosPermisosController import buscar_empleado_por_email, cargar_datos_ver_reporte_permisos_empleados, actualizar_horas_disponibles
 from app.routers.authRoute import get_current_active_user_with_role, get_current_active_user_with_rol
 
 
@@ -44,5 +44,18 @@ async def get_empleado_por_email(
             status_code=200,
             content=jsonable_encoder(empleado)
         )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/actualizarHorasDisponibles/")
+def put_actualizar_horas_disponibles(
+    datos: ActualizarHorasDisponiblesRequest,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_active_user_with_rol([3, 5]))
+):
+    try:
+        resultado = actualizar_horas_disponibles(db, datos)
+        return JSONResponse(status_code=200, content=resultado)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
