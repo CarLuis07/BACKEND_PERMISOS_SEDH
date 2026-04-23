@@ -42,7 +42,7 @@ def obtener_empleado_por_email(db: Session, email_institucional: str):
             "estado_civil": result.get("EstadoCivil"),
             "departamento": result.get("Departamento"),
             "municipio": result.get("Municipio"),
-            "id_sup_inmediato": result.get("IdSupInmediato"),
+            "jefe_inmediato": result.get("Jefe_Inmediato"),
             "hor_disponibles": hor_disponibles
         }
         
@@ -99,6 +99,37 @@ def crear_empleado(db: Session, current_user_email: str, empleado_data: dict):
         
         db.commit()
         return {"mensaje": "Empleado creado exitosamente"}
+    except Exception as e:
+        db.rollback()
+        raise e
+
+def actualizar_empleado(db: Session, actualizador_email: str, datos: dict):
+    try:
+        query = text("""
+            EXEC ActualizarEmpleado
+            @EmailInstitucional=:email_institucional,
+            @ActLaboralmente=:act_laboralmente,
+            @NumTelefono=:num_telefono,
+            @IdTipoContratacion=:id_tipo_contratacion,
+            @IdCargo=:id_cargo,
+            @NombreJefe=:nombre_jefe,
+            @IdEstadoCivil=:id_estado_civil,
+            @ActualizadoPor=:actualizado_por
+        """)
+
+        db.execute(query, {
+            "email_institucional": datos["email_institucional"],
+            "act_laboralmente": datos.get("act_laboralmente"),
+            "num_telefono": datos.get("num_telefono"),
+            "id_tipo_contratacion": datos.get("id_tipo_contratacion"),
+            "id_cargo": datos.get("id_cargo"),
+            "nombre_jefe": datos.get("nombre_jefe"),
+            "id_estado_civil": datos.get("id_estado_civil"),
+            "actualizado_por": actualizador_email
+        })
+
+        db.commit()
+        return {"mensaje": "Empleado actualizado exitosamente"}
     except Exception as e:
         db.rollback()
         raise e

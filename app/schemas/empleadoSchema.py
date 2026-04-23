@@ -60,7 +60,7 @@ class EmpleadoDetalle(BaseModel):
     estado_civil: Optional[str] = None
     departamento: Optional[str] = None
     municipio: Optional[str] = None
-    id_sup_inmediato: Optional[str] = None
+    jefe_inmediato: Optional[str] = None
     hor_disponibles: Optional[str] = None
 
     class Config:
@@ -68,3 +68,12 @@ class EmpleadoDetalle(BaseModel):
 
 class EmpleadoEmailRequest(BaseModel):
     email_institucional: str
+
+class EmpleadoUpdate(BaseModel):
+    email_institucional: str
+    act_laboralmente: Optional[int] = None
+    num_telefono: Optional[str] = None
+    id_tipo_contratacion: Optional[int] = None
+    id_cargo: Optional[int] = None
+    nombre_jefe: Optional[str] = None
+    id_estado_civil: Optional[int] = None

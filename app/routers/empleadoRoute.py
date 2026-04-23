@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.schemas.empleadoSchema import Empleado as EmpleadoSchema
-from app.schemas.empleadoSchema import EmpleadoCreate, EmpleadoDetalle, EmpleadoEmailRequest
-from app.controllers.empleadoController import obtener_empleado_por_email, crear_empleado
+from app.schemas.empleadoSchema import EmpleadoCreate, EmpleadoDetalle, EmpleadoEmailRequest, EmpleadoUpdate
+from app.controllers.empleadoController import obtener_empleado_por_email, crear_empleado, actualizar_empleado
 from app.routers.authRoute import get_current_active_user_with_role
 from app.schemas.authSchema import TokenData
 
@@ -31,5 +31,16 @@ async def create_empleado(
 ):
     try:
         return crear_empleado(db, current_user.email, empleado.dict())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/empleados/actualizar", status_code=200)
+async def update_empleado(
+    empleado: EmpleadoUpdate,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_active_user_with_role(5))
+):
+    try:
+        return actualizar_empleado(db, current_user.email, empleado.dict())
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
